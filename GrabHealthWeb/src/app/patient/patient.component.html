@@ -1,0 +1,112 @@
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+
+  <div class="container col-sm-12">
+
+    <div class="row">
+    <div class="form-group col-sm-2">
+      <label for="firstName">First Name:</label>
+        <input type = "text" class="form-control" id="firstName" formControlName = "firstName">
+        <div *ngIf="submitted && registrationForm.controls.firstName.errors" class="error">
+          <div *ngIf="registrationForm.controls.firstName.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-2">
+      <label for="lastName">Last Name:</label>
+        <input type = "text" class="form-control" id="lastName" formControlName = "lastName">
+        <div *ngIf="submitted && registrationForm.controls.lastName.errors" class="error">
+          <div *ngIf="registrationForm.controls.lastName.errors.required">Required!</div>
+        </div>
+    </div>
+    </div>
+
+    <div class="form-group">
+      <label for="nric">NRIC/ Passport No.:</label>
+        <input type = "text" class="col-sm-2 form-control" id="nric" formControlName = "nric">
+        <div *ngIf="submitted && registrationForm.controls.nric.errors" class="error">
+          <div *ngIf="registrationForm.controls.nric.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="contactNo">Contact No.:</label>
+        <input type = "text" class="col-sm-2 form-control" id="contactNo" formControlName = "contactNo">
+        <div *ngIf="submitted && registrationForm.controls.contactNo.errors" class="error">
+          <div *ngIf="registrationForm.controls.contactNo.errors.required">Required!</div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="streetName">Street Name:</label>
+        <input type = "text" class="col-sm-2 form-control" id="streetName" formControlName = "streetName">
+        <div *ngIf="submitted && registrationForm.controls.streetName.errors" class="error">
+          <div *ngIf="registrationForm.controls.streetName.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="blockNo">Block No.:</label>
+        <input type = "text" class="col-sm-2 form-control" id="blockNo" formControlName = "blockNo">
+        <div *ngIf="submitted && registrationForm.controls.blockNo.errors" class="error">
+          <div *ngIf="registrationForm.controls.blockNo.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="unitNo">Unit No.:</label>
+        <input type = "text" class="col-sm-2 form-control" id="unitNo" formControlName = "unitNo">
+        <div *ngIf="submitted && registrationForm.controls.unitNo.errors" class="error">
+          <div *ngIf="registrationForm.controls.unitNo.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="postalCode">Postal Code:</label>
+        <input type = "text" class="col-sm-2 form-control" id="postalCode" formControlName = "postalCode">
+        <div *ngIf="submitted && registrationForm.controls.postalCode.errors" class="error">
+          <div *ngIf="registrationForm.controls.postalCode.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="attach">Attach IC/ Passport Photo:</label>
+      <div class="input-group mb-3">
+        <div class="custom-file col-sm-2">
+          <input type="file" class="custom-file-input" id="inputGroupFile02">
+          <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+        </div>
+        <div class="input-group-append">
+          <span class="input-group-text" id="">Upload</span>
+        </div>
+      </div>
+      <div *ngIf="submitted && registrationForm.controls.attach.errors" class="error">
+          <div *ngIf="registrationForm.controls.attach.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="form-group col-sm-2">
+      <label for="userName">Username:</label>
+        <input type = "text" class="form-control" id="userName" formControlName = "userName">
+        <div *ngIf="submitted && registrationForm.controls.userName.errors" class="error">
+          <div *ngIf="registrationForm.controls.userName.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-2">
+      <label for="password">Password:</label>
+        <input type = "text" class="form-control" id="password" formControlName = "password">
+        <div *ngIf="submitted && registrationForm.controls.password.errors" class="error">
+          <div *ngIf="registrationForm.controls.password.errors.required">Required!</div>
+        </div>
+    </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+    <h5 *ngIf="success">Your form is valid!</h5>
+
+  </div>
+
+</form>
+
