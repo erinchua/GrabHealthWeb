@@ -2,21 +2,28 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-
 import Issue from './models/Issue';
-
+const ExtServer = require('./routes/server');
 const app = express();
 const router = express.Router();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost:27017/issues', { useNewUrlParser: true });
+//External Server
+app.use('/GrabHealthWeb', ExtServer);
 
+// mongoose.connect('mongodb://localhost:27017/issues', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27018/GrabHealthWeb', {useNewUrlParser: true, useCreateIndex: true });
+mongoose.Promise = global.Promise;
 const connection = mongoose.connection;
 
-connection.once('open', () => {
-    console.log('Mongo DB database connection established successfully!')
+connection.once('connected', () => {
+    console.log('Mongo DB database connection established successfully!');
+});
+
+connection.on('error', (err) => {
+    console.log('Database error: ' + err);
 });
 
 router.route('/issues').get((req, res) => {
@@ -48,6 +55,7 @@ router.route('/issues/add').post((req, res) => {
         });
 });
 
+
 router.route('/issues/update/:id').post((req, res) => {
     Issues.findById(req.params.id, (err, issue) => {
         if (!issue)
@@ -78,5 +86,8 @@ router.route('/issues/delete/:id').get((req, res) => {
 })
 
 app.use('/', router);
+
+//External Server
+app.use('/GrabHealthWeb', ExtServer);
 
 app.listen(4000, () => console.log('Express server running on port 4000'));
