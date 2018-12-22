@@ -37,26 +37,26 @@
     </div>
     
     <div class="form-group">
-      <label for="streetName">Street Name:</label>
-        <input type = "text" class="col-sm-2 form-control" id="streetName" formControlName = "streetName">
-        <div *ngIf="submitted && registrationForm.controls.streetName.errors" class="error">
-          <div *ngIf="registrationForm.controls.streetName.errors.required">Required!</div>
+      <label for="gender">Gender:</label>
+        <input type = "text" class="col-sm-2 form-control" id="gender" formControlName = "gender">
+        <div *ngIf="submitted && registrationForm.controls.gender.errors" class="error">
+          <div *ngIf="registrationForm.controls.gender.errors.required">Required!</div>
         </div>
     </div>
 
     <div class="form-group">
-      <label for="blockNo">Block No.:</label>
-        <input type = "text" class="col-sm-2 form-control" id="blockNo" formControlName = "blockNo">
-        <div *ngIf="submitted && registrationForm.controls.blockNo.errors" class="error">
-          <div *ngIf="registrationForm.controls.blockNo.errors.required">Required!</div>
+      <label for="dob">Date of Birth:</label>
+        <input type = "date" class="col-sm-2 form-control" id="dob" formControlName = "dob">
+        <div *ngIf="submitted && registrationForm.controls.dob.error  s" class="error">
+          <div *ngIf="registrationForm.controls.dob.errors.required">Required!</div>
         </div>
     </div>
 
     <div class="form-group">
-      <label for="unitNo">Unit No.:</label>
-        <input type = "text" class="col-sm-2 form-control" id="unitNo" formControlName = "unitNo">
-        <div *ngIf="submitted && registrationForm.controls.unitNo.errors" class="error">
-          <div *ngIf="registrationForm.controls.unitNo.errors.required">Required!</div>
+      <label for="address">Address:</label>
+        <input type = "text" class="col-sm-2 form-control" id="address" formControlName = "address">
+        <div *ngIf="submitted && registrationForm.controls.address.errors" class="error">
+          <div *ngIf="registrationForm.controls.address.errors.required">Required!</div>
         </div>
     </div>
 
@@ -65,6 +65,14 @@
         <input type = "text" class="col-sm-2 form-control" id="postalCode" formControlName = "postalCode">
         <div *ngIf="submitted && registrationForm.controls.postalCode.errors" class="error">
           <div *ngIf="registrationForm.controls.postalCode.errors.required">Required!</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+      <label for="nationality">Nationality:</label>
+        <input type = "text" class="col-sm-2 form-control" id="nationality" formControlName = "nationality">
+        <div *ngIf="submitted && registrationForm.controls.nationality.errors" class="error">
+          <div *ngIf="registrationForm.controls.nationality.errors.required">Required!</div>
         </div>
     </div>
 
@@ -95,7 +103,27 @@
 
     <div class="form-group col-sm-2">
       <label for="password" [ngClass]="registrationForm.controls['password'].invalid ? 'text-danger' : ''">Password:</label>
-        <input type = "text" class="form-control" id="password" formControlName = "password">
+        <input type = "text" class="form-control" id="password" formControlName = "password" [ngClass]="registrationForm.controls['password'].invalid ? 'is-invalid' : ''">
+        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'text-danger' : 'text-success'">
+          <i class="material-icons" aria-hidden="true">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'cancel' : 'check_circle' }}</i>
+          Must be at least 8 characters!
+        </label>
+        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasNumber')  ? 'text-danger' : 'text-success'">
+          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasNumber') ? 'cancel' : 'check_circle' }}</i>
+          Must contain at least 1 number!
+        </label>
+        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasCapitalCase')  ? 'text-danger' : 'text-success'">
+          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasCapitalCase') ? 'cancel' : 'check_circle' }}</i>
+          Must contain at least 1 in Capital Case!
+        </label>
+        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSmallCase')  ? 'text-danger' : 'text-success'">
+          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSmallCase') ? 'cancel' : 'check_circle' }}</i>
+          Must contain at least 1 Letter in Small Case!
+        </label>
+        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSpecialCharacters') ? 'text-danger' : 'text-success'">
+          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSpecialCharacters') ? 'cancel' : 'check_circle' }}</i>
+          Must contain at least 1 Special Character!
+        </label>
         <div *ngIf="submitted && registrationForm.controls.password.errors" class="error">
           <div *ngIf="registrationForm.controls.password.errors.required">Required!</div>
         </div>
