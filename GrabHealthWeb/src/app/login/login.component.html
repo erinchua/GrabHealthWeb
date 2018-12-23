@@ -1,0 +1,37 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="container">
+
+        <div class="row">
+            <div class="Absolute-Center is-Responsive">
+                <div class="col-sm-12 col-md-10 col-md-offset-1">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon"><i class="material-icons">person</i></span>
+                        <input type="text" placeholder="Username" class="form-control text-line" id="userName" formControlName="userName">
+                        <div *ngIf="submitted && loginForm.controls.userName.errors" class="error">
+                            <div *ngIf="loginForm.controls.userName.errors.required">Required!</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group input-group">    
+                            <span class="input-group-addon"><i class="material-icons">lock</i></span>
+                            <input type="password" placeholder="Password" class="form-control" id="password" formControlName="password">
+                            <div *ngIf="submitted && loginForm.controls.password.errors" class="error">
+                                <div *ngIf="loginForm.controls.password.errors.required">Required!</div>
+                            </div>
+                    </div>
+
+                    <div class="form-group text-right">
+                        <label>
+                            <a routerLink="/">Forget Password</a>
+                        </label>
+                    </div>
+
+                    <div class="form-group float-right">
+                        <button class="btn btn-primary " type="submit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>

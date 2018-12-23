@@ -105,7 +105,7 @@
       <label for="password" [ngClass]="registrationForm.controls['password'].invalid ? 'text-danger' : ''">Password:</label>
         <input type = "text" class="form-control" id="password" formControlName = "password" [ngClass]="registrationForm.controls['password'].invalid ? 'is-invalid' : ''">
         <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'text-danger' : 'text-success'">
-          <i class="material-icons" aria-hidden="true">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'cancel' : 'check_circle' }}</i>
+          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'cancel' : 'check_circle' }}</i>
           Must be at least 8 characters!
         </label>
         <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasNumber')  ? 'text-danger' : 'text-success'">
