@@ -24,17 +24,22 @@ export class PatientComponent implements OnInit {
       postalCode: ['', Validators.required],
       nationality: ['', Validators.required],
       contactNo: ['', Validators.required],
-      attach: ['',Validators.required],
-      userName: ['',Validators.required],
-      password: ['',Validators.compose([Validators.required, 
+      attach: ['', Validators.required],
+      userName: ['', Validators.required],
+      password: ['', Validators.compose([Validators.required, 
                                       CustomValidators.patternValidator(/\d/, { hasNumber: true }),
-                                      CustomValidators.patternValidator(/[A-Z]/, { hasCapitalCase: true }),
-                                      CustomValidators.patternValidator(/[a-z]/, { hasSmallCase: true}),
-                                      CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true}),
+                                      CustomValidators.patternValidator(/[A-Z]/, { hasUpperCase: true }),
+                                      CustomValidators.patternValidator(/[a-z]/, { hasLowerCase: true }),
+                                      CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true }),
                                       Validators.minLength(8)])],
+      confirmPassword: ['', Validators.required]
       
 
-    })
+    },
+    {
+      validator: CustomValidators.passwordMatchValidator
+    }
+    );
   }
 
   onSubmit(){
