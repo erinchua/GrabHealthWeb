@@ -1,0 +1,28 @@
+#viewSide {
+    margin-top: 50px;
+    width: 250px;
+}
+
+#rightSide {
+    margin-top: 50px;
+    border-style: solid;
+}
+
+#rightInner {
+    margin: 5px;
+    padding: 10px;
+}
+
+.text-line {
+    border: none; /* Get rid of the browser's styling */
+    border-bottom: 1px solid gray; /* Add your own border */
+    background-color: transparent;
+    width: 100%;
+}
+
+label {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-right: 10px;
+    font-weight: bold;
+}

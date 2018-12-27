@@ -13,6 +13,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from './login/login.component';
 
 import { IssueService } from './issue.service';
+import { ProfileComponent } from './profile/profile.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { FindClinicComponent } from './find-clinic/find-clinic.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { IssueService } from './issue.service';
     NavComponent,
     HomeComponent,
     PatientComponent,
-    LoginComponent
+    LoginComponent,
+    ProfileComponent,
+    EditProfileComponent,
+    FindClinicComponent
   ],
   imports: [
     BrowserModule,

@@ -57,7 +57,7 @@
 
         <div class="form-group">
           <label for="address">Address:</label>
-            <input type = "text" placeholder="Blk 111 Happy Street 01 #08-123" class="form-control" id="address" formControlName = "address" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.address.errors }">
+            <input type = "text" placeholder="Blk 111 Happy Street 01" class="form-control" id="address" formControlName = "address" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.address.errors }">
             <div *ngIf="submitted && registrationForm.controls.address.errors" class="invalid-feedback">
               <div *ngIf="registrationForm.controls.address.errors.required">Required!</div>
             </div>
