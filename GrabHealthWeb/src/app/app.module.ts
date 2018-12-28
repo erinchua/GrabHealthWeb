@@ -16,6 +16,7 @@ import { IssueService } from './issue.service';
 import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { FindClinicComponent } from './find-clinic/find-clinic.component';
+import { PatientService } from './services/patient.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,7 @@ import { FindClinicComponent } from './find-clinic/find-clinic.component';
     HttpClientModule,
     AngularFontAwesomeModule
   ],
-  providers: [IssueService],
+  providers: [IssueService, PatientService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

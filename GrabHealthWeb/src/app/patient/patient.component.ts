@@ -1,19 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'; 
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; 
 import { CustomValidators } from '../custom-validators';
-
+import { PatientService } from '../services/patient.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-patient',
   templateUrl: './patient.component.html',
   styleUrls: ['./patient.component.scss']
 })
 export class PatientComponent implements OnInit {
-
-  registrationForm: FormGroup;
+  registrationForm = new FormGroup({
+    firstName: new FormControl('firstName'),
+    lastName: new FormControl('lastName'),
+    nric:new FormControl('nric'),
+    contactNo: new FormControl('contactNo'),
+    gender: new FormControl('gender'),
+    address: new FormControl('address'),
+    postalCode: new FormControl('postalCode'),
+    nationality: new FormControl('nationality'),
+    username: new FormControl('userName'),
+    password: new FormControl('password'),
+    dob: new FormControl('dob')
+  });
+ 
   submitted = false;
   success = false;
 
-  constructor(private formBuilder: FormBuilder) { 
+  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router) { 
     this.registrationForm = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -48,8 +61,18 @@ export class PatientComponent implements OnInit {
     if(this.registrationForm.invalid){
       return;
     }
+    console.log(this.registrationForm.value);
+    this.patientService.registerPatient(this.registrationForm.value).subscribe(
+      res=>{
+        if(res['success'])
+          this.router.navigateByUrl('login');
+      },
+      err=>{
 
+      }
+    );
     this.success = true;
+
   }
 
   ngOnInit() {
