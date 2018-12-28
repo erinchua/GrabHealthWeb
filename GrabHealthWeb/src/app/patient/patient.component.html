@@ -1,140 +1,136 @@
 <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
 
-  <div class="container col-sm-12">
+  <div class="container">
 
     <div class="row">
-    <div class="form-group col-sm-2">
-      <label for="firstName">First Name:</label>
-        <input type = "text" class="form-control" id="firstName" formControlName = "firstName">
-        <div *ngIf="submitted && registrationForm.controls.firstName.errors" class="error">
-          <div *ngIf="registrationForm.controls.firstName.errors.required">Required!</div>
+      <div class="Absolute-Center is-Responsive col-sm-12 col-md-10 col-md-offset-1">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+            <input type = "text" class="form-control" id="firstName" formControlName = "firstName" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.firstName.errors }">
+            <div *ngIf="submitted && registrationForm.controls.firstName.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.firstName.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group col-sm-2">
-      <label for="lastName">Last Name:</label>
-        <input type = "text" class="form-control" id="lastName" formControlName = "lastName">
-        <div *ngIf="submitted && registrationForm.controls.lastName.errors" class="error">
-          <div *ngIf="registrationForm.controls.lastName.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+            <input type = "text" class="form-control" id="lastName" formControlName = "lastName" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.lastName.errors }">
+            <div *ngIf="submitted && registrationForm.controls.lastName.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.lastName.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
-    </div>
 
-    <div class="form-group">
-      <label for="nric">NRIC/ Passport No.:</label>
-        <input type = "text" class="col-sm-2 form-control" id="nric" formControlName = "nric">
-        <div *ngIf="submitted && registrationForm.controls.nric.errors" class="error">
-          <div *ngIf="registrationForm.controls.nric.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="nric">NRIC/ Passport No.:</label>
+            <input type = "text" class="form-control" id="nric" formControlName = "nric" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.nric.errors }">
+            <div *ngIf="submitted && registrationForm.controls.nric.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.nric.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="contactNo">Contact No.:</label>
-        <input type = "text" class="col-sm-2 form-control" id="contactNo" formControlName = "contactNo">
-        <div *ngIf="submitted && registrationForm.controls.contactNo.errors" class="error">
-          <div *ngIf="registrationForm.controls.contactNo.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="contactNo">Contact No.:</label>
+            <input type = "text" class="form-control" id="contactNo" formControlName = "contactNo" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.contactNo.errors }">
+            <div *ngIf="submitted && registrationForm.controls.contactNo.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.contactNo.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
-    
-    <div class="form-group">
-      <label for="gender">Gender:</label>
-        <input type = "text" class="col-sm-2 form-control" id="gender" formControlName = "gender">
-        <div *ngIf="submitted && registrationForm.controls.gender.errors" class="error">
-          <div *ngIf="registrationForm.controls.gender.errors.required">Required!</div>
+      
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+            <select class="form-control" id="gender" formControlName = "gender" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.gender.errors }">
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+            <div *ngIf="submitted && registrationForm.controls.gender.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.gender.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="dob">Date of Birth:</label>
-        <input type = "date" class="col-sm-2 form-control" id="dob" formControlName = "dob">
-        <div *ngIf="submitted && registrationForm.controls.dob.error  s" class="error">
-          <div *ngIf="registrationForm.controls.dob.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="dob">Date of Birth:</label>
+            <input type = "date" class="form-control" id="dob" formControlName = "dob" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.dob.errors }">
+            <div *ngIf="submitted && registrationForm.controls.dob.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.dob.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="address">Address:</label>
-        <input type = "text" class="col-sm-2 form-control" id="address" formControlName = "address">
-        <div *ngIf="submitted && registrationForm.controls.address.errors" class="error">
-          <div *ngIf="registrationForm.controls.address.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="address">Address:</label>
+            <input type = "text" placeholder="Blk 111 Happy Street 01" class="form-control" id="address" formControlName = "address" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.address.errors }">
+            <div *ngIf="submitted && registrationForm.controls.address.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.address.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="postalCode">Postal Code:</label>
-        <input type = "text" class="col-sm-2 form-control" id="postalCode" formControlName = "postalCode">
-        <div *ngIf="submitted && registrationForm.controls.postalCode.errors" class="error">
-          <div *ngIf="registrationForm.controls.postalCode.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="postalCode">Postal Code:</label>
+            <input type = "text" placeholder="512111" class="form-control" id="postalCode" formControlName = "postalCode" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.postalCode.errors }">
+            <div *ngIf="submitted && registrationForm.controls.postalCode.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.postalCode.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="nationality">Nationality:</label>
-        <input type = "text" class="col-sm-2 form-control" id="nationality" formControlName = "nationality">
-        <div *ngIf="submitted && registrationForm.controls.nationality.errors" class="error">
-          <div *ngIf="registrationForm.controls.nationality.errors.required">Required!</div>
+        <div class="form-group">
+          <label for="nationality">Nationality:</label>
+            <input type = "text" class="form-control" id="nationality" formControlName = "nationality" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.nationality.errors }">
+            <div *ngIf="submitted && registrationForm.controls.nationality.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.nationality.errors.required">Required!</div>
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
-      <label for="attach">Attach IC/ Passport Photo:</label>
-      <div class="input-group mb-3">
-        <div class="custom-file col-sm-2">
-          <input type="file" class="custom-file-input" id="inputGroupFile02">
-          <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+        <div class="form-group">
+          <label for="attach">Attach IC/ Passport Photo:</label>
+          <div class="input-group mb-3">
+            <div class="custom-file">
+              <input type="file" class="form-control custom-file-input" id="attach" formControlName = "attach" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.attach.errors }">
+              <label class="custom-file-label" for="attach">Choose file</label>
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text" id="">Upload</span>
+            </div>
+          </div>
+          <div *ngIf="submitted && registrationForm.controls.attach.errors" class="invalid-feedback">
+            <div *ngIf="registrationForm.controls.attach.errors.required">Required!</div>
+          </div>
         </div>
-        <div class="input-group-append">
-          <span class="input-group-text" id="">Upload</span>
+
+        <div class="form-group">
+          <label for="userName">Username:</label>
+            <input type = "text" class="form-control" id="userName" formControlName = "userName" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.userName.errors }">
+            <div *ngIf="submitted && registrationForm.controls.userName.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.userName.errors.required">Required!</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+            <input type = "password" class="form-control" id="password" formControlName = "password" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.password.errors }">
+            <div *ngIf="submitted && registrationForm.controls.password.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.password.errors.required">Required!</div>
+            </div>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['password'].hasError('minlength')">Must be at least 8 characters</label>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['password'].hasError('hasNumber')">Must contain at least 1 number</label>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['password'].hasError('hasUpperCase')">Must contain at least 1 Upper Case</label>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['password'].hasError('hasLowerCase')">Must be at least 1 Lower Case</label>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['password'].hasError('hasSpecialCharacters')">Must be at least 1 Special Character</label>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input  type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.confirmPassword.errors }">
+            <div *ngIf="submitted && registrationForm.controls.password.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.password.errors.required">Required!</div>
+            </div>
+            <label class="invalid-feedback" *ngIf="registrationForm.controls['confirmPassword'].hasError('NoPassswordMatch')">Password do not match</label>
+        </div>
+
+        <div class="form-group float-right">
+          <button class="btn btn-primary " type="submit">Submit</button>
         </div>
       </div>
-      <div *ngIf="submitted && registrationForm.controls.attach.errors" class="error">
-          <div *ngIf="registrationForm.controls.attach.errors.required">Required!</div>
-        </div>
     </div>
-
-    <div class="row">
-    <div class="form-group col-sm-2">
-      <label for="userName">Username:</label>
-        <input type = "text" class="form-control" id="userName" formControlName = "userName">
-        <div *ngIf="submitted && registrationForm.controls.userName.errors" class="error">
-          <div *ngIf="registrationForm.controls.userName.errors.required">Required!</div>
-        </div>
-    </div>
-
-    <div class="form-group col-sm-2">
-      <label for="password" [ngClass]="registrationForm.controls['password'].invalid ? 'text-danger' : ''">Password:</label>
-        <input type = "text" class="form-control" id="password" formControlName = "password" [ngClass]="registrationForm.controls['password'].invalid ? 'is-invalid' : ''">
-        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'text-danger' : 'text-success'">
-          <i class="material-icons" aria-hidden="true">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('minlength') ? 'cancel' : 'check_circle' }}</i>
-          Must be at least 8 characters!
-        </label>
-        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasNumber')  ? 'text-danger' : 'text-success'">
-          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasNumber') ? 'cancel' : 'check_circle' }}</i>
-          Must contain at least 1 number!
-        </label>
-        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasCapitalCase')  ? 'text-danger' : 'text-success'">
-          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasCapitalCase') ? 'cancel' : 'check_circle' }}</i>
-          Must contain at least 1 in Capital Case!
-        </label>
-        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSmallCase')  ? 'text-danger' : 'text-success'">
-          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSmallCase') ? 'cancel' : 'check_circle' }}</i>
-          Must contain at least 1 Letter in Small Case!
-        </label>
-        <label class="col" [ngClass]="registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSpecialCharacters') ? 'text-danger' : 'text-success'">
-          <i class="material-icons">{{ registrationForm.controls['password'].hasError('required') || registrationForm.controls['password'].hasError('hasSpecialCharacters') ? 'cancel' : 'check_circle' }}</i>
-          Must contain at least 1 Special Character!
-        </label>
-        <div *ngIf="submitted && registrationForm.controls.password.errors" class="error">
-          <div *ngIf="registrationForm.controls.password.errors.required">Required!</div>
-        </div>
-    </div>
-    </div>
-
-    <button class="btn btn-primary" type="submit">Submit</button>
-
-    <h5 *ngIf="success">Your form is valid!</h5>
-
+    
   </div>
 
 </form>
-
