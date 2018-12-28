@@ -3,6 +3,7 @@ const router = express.Router();
 const Patient = require('../models/patient');
 //Register
 router.post('/register', (req, res, next) => {
+    console.log(req.body);
     let newPatient = new Patient({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -12,11 +13,12 @@ router.post('/register', (req, res, next) => {
         address: req.body.address,
         postalCode: req.body.postalCode,
         nationality: req.body.nationality,
-        userName: req.body.username,
+        userName: req.body.userName,
         password: req.body.password
     });
     Patient.addPatient(newPatient, (err, patient) => {
         if(err){
+            console.log(err);
             res.json({success: false, msg: "Failed to register user"});
         } else {
             res.json({success: true, msg: "Patient successfully registered"});

@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'src')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use('/', patient);
+app.use('/patient', patient);
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 

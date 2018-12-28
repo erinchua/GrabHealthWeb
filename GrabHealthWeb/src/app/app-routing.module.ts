@@ -8,7 +8,7 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { FindClinicComponent } from './find-clinic/find-clinic.component';
 
 const routes: Routes = [
-  {path: '/', redirectTo: 'login', pathMatch: 'full' },
+  {path: '', component: HomeComponent },
   {path: 'home', component: HomeComponent},
   {path: 'patient', component: PatientComponent},
   {path: 'login', component: LoginComponent},
