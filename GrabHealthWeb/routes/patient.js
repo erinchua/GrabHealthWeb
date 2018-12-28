@@ -34,4 +34,14 @@ router.get('/profile', (req, res, next) => {
     res.send('PROFILE');
 });
 
+router.get('/getPatient', (req, res) => {
+    Patient.find((err, patient) => {
+        if (err)
+            console.log(err);
+        else
+            res.json(patient);
+    });
+});
+
+
 module.exports = router;
