@@ -1,25 +1,46 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-import Issue from './models/Issue';
+const express =  require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Issue = require('./models/Issue');
+const path = require('path');
+const helmet = require('helmet');
 const ExtServer = require('./routes/server');
 const app = express();
 const router = express.Router();
+const patient = require('./routes/patient');
+const config = require('./config/database');
+//Helmet middleware
+app.use(helmet());
 
+//CORS middleware
 app.use(cors());
-app.use(bodyParser.json());
 
+app.use(function(req, res, next) {
+    //set headers to allow cross origin request.
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
+    
+
+app.use(express.static(path.join(__dirname, 'src')));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.use('/', patient);
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
 // mongoose.connect('mongodb://localhost:27017/issues', { useNewUrlParser: true });
-mongoose.connect('mongodb://localhost:27018/GrabHealthWeb', {useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
 const connection = mongoose.connection;
 
 connection.once('connected', () => {
-    console.log('Mongo DB database connection established successfully!');
+    console.log('Connected to database ' + config.database);
 });
 
 connection.on('error', (err) => {
