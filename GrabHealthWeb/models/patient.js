@@ -1,44 +1,74 @@
-import mongoose from 'mongoose';
-
-const PatientSchema = mongoose.Schema;
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const Schema = mongoose.Schema;
 
 let PatientSchema = new Schema({
     firstName: {
-        type: String
+        type: String,
+        required: true
     },
     lastName: {
-        type: String
+        type: String,
+        required: true
     },
     nric: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
     contactNo: {
-        type: Number
+        type: Number,
+        required: true
     },
     gender: {
-        type: String
+        type: String,
+        required: true
     },
     dob: {
         type: Date
     },
     address: {
-        type: String
+        type: String,
+        required: true
     },
     postalCode: {
-        type: Number
+        type: Number,
+        required: true
     },
     nationality: {
-        type: String
+        type: String,
+        required: true
     },
     passportPhto: {
         type: String
     },
     userName: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
     password: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
-export default mongoose.model('Patient', PatientSchema);
+const Patient = module.exports = mongoose.model('Patient', PatientSchema);
+
+module.exports.getPatientById = function(id, callback){
+    Patient.findById(id, callback);
+}
+
+module.exports.getPatientByUsername = function(username, callback){
+    Patient.findOne({userName: username}, callback);
+}
+
+module.exports.addPatient = function(newPatient, callback){
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newPatient.password, salt, (err, hash) => {
+            if(err) throw err;
+            newPatient.password = hash;
+            newPatient.save(callback);
+        });
+    });
+}
