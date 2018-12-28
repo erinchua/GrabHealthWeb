@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; 
 import { CustomValidators } from '../custom-validators';
 import { PatientService } from '../services/patient.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-patient',
   templateUrl: './patient.component.html',
@@ -25,7 +26,7 @@ export class PatientComponent implements OnInit {
   submitted = false;
   success = false;
 
-  constructor(private formBuilder: FormBuilder, private patientService: PatientService) { 
+  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router) { 
     this.registrationForm = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -64,8 +65,7 @@ export class PatientComponent implements OnInit {
     this.patientService.registerPatient(this.registrationForm.value).subscribe(
       res=>{
         if(res['success'])
-          console.log("success");
-        console.log(res);
+          this.router.navigateByUrl('login');
       },
       err=>{
 
