@@ -10,23 +10,23 @@ export class PatientService {
     constructor(private http: HttpClient) {}
 
     registerPatient(patient){
-        let headers = new HttpHeaders();
-        headers.append('Content-Type', 'application/json');
-        return this.http.post('http://localhost:4000/patient/register', patient, {headers : headers});
+        //let headers = new HttpHeaders();
+        //headers.append('Content-Type', 'application/json');
+        return this.http.post('http://localhost:4000/patient/register', patient/*, {headers : headers}*/);
     }
 
     authenticatePatient(patient){
-        let headers = new HttpHeaders();
-        headers.append('Content-Type', 'application/json');
-        return this.http.post('http://localhost:4000/patient/authenticate', patient, {headers : headers});
+        //let headers = new HttpHeaders();
+        //headers.append('Content-Type', 'application/json');
+        return this.http.post('http://localhost:4000/patient/authenticate', patient);
     }
 
     getPatientDetails(){
-        let headers = new HttpHeaders();
+        //let headers = new HttpHeaders();
         this.loadToken();
-        headers.append('Authorization', this.authToken)
-        headers.append('Content-Type', 'application/json');
-        return this.http.get(`http://localhost:4000/patient/profile`, {headers : headers});
+        //headers.append('Authorization', this.authToken)
+        //headers.append('Content-Type', 'application/json');
+        return this.http.get(`http://localhost:4000/patient/profile`);
     }
 
     storeUserData(token, patient){
