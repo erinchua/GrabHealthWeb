@@ -25,7 +25,8 @@ let PatientSchema = new Schema({
         required: true
     },
     dob: {
-        type: Date
+        type: Date,
+        required: true 
     },
     address: {
         type: String,
@@ -39,7 +40,7 @@ let PatientSchema = new Schema({
         type: String,
         required: true
     },
-    passportPhto: {
+    attach: {
         type: String
     },
     userName: {
@@ -70,5 +71,12 @@ module.exports.addPatient = function(newPatient, callback){
             newPatient.password = hash;
             newPatient.save(callback);
         });
+    });
+}
+
+module.exports.comparePassword = function(patientPassword, hash, callback){
+    bcrypt.compare(patientPassword, hash, (err, isMatch) => {
+        if(err) throw err;
+        callback(null, isMatch);
     });
 }

@@ -17,6 +17,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { FindClinicComponent } from './find-clinic/find-clinic.component';
 import { PatientService } from './services/patient.service';
+import { FlashMessagesModule } from 'angular2-flash-messages';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { PatientService } from './services/patient.service';
     ReactiveFormsModule,
     NgbModule.forRoot(),
     HttpClientModule,
-    AngularFontAwesomeModule
+    AngularFontAwesomeModule,
+    FlashMessagesModule.forRoot()
   ],
   providers: [IssueService, PatientService],
   bootstrap: [AppComponent]

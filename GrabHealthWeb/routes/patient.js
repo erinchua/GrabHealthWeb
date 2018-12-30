@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Patient = require('../models/patient');
+
 //Register
 router.post('/register', (req, res, next) => {
     console.log(req.body);
@@ -10,9 +11,11 @@ router.post('/register', (req, res, next) => {
         nric: req.body.nric,
         contactNo: req.body.contactNo,
         gender: req.body.gender,
+        dob: req.body.dob,
         address: req.body.address,
         postalCode: req.body.postalCode,
         nationality: req.body.nationality,
+        attach: req.body.attach,
         userName: req.body.userName,
         password: req.body.password
     });
@@ -28,12 +31,38 @@ router.post('/register', (req, res, next) => {
 
 //Authenticate
 router.post('/authenticate', (req, res, next) => {
-    res.send('AUTHENTICATE');
+    const userName = req.body.userName;
+    const password = req.body.password;
+
+    Patient.getPatientByUsername(userName, (err, patient) => {
+        if(err){
+            console.log(err);
+        } if (!patient){
+            return res.json({success: false, msg: "User not found"});
+        }
+
+        Patient.comparePassword(password, patient.password, (err, isMatch) => {
+            if (err) {
+                console.log(err);
+            } if (isMatch) {
+                res.json ({success: true, msg: "Successful Login"})
+            } else {
+               return res.json({success: false, msg: "Wrong Password"})
+            }
+        })
+    });
 });
 
 //Profile
 router.get('/profile', (req, res, next) => {
-    res.send('PROFILE');
+    //res.send('PROFILE');
+    // Patient.find((err, patient) => {
+    //     if (err)
+    //         console.log(err);
+    //     else
+    //         res.json(patient);
+    // });
+    res.json({patient: req.patient});
 });
 
 router.get('/getPatient', (req, res) => {

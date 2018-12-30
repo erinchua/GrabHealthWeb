@@ -15,12 +15,13 @@ export class PatientComponent implements OnInit {
     nric:new FormControl('nric'),
     contactNo: new FormControl('contactNo'),
     gender: new FormControl('gender'),
+    dob: new FormControl('dob'),
     address: new FormControl('address'),
     postalCode: new FormControl('postalCode'),
     nationality: new FormControl('nationality'),
+    attach: new FormControl('attach'),
     username: new FormControl('userName'),
     password: new FormControl('password'),
-    dob: new FormControl('dob')
   });
  
   submitted = false;
@@ -61,16 +62,15 @@ export class PatientComponent implements OnInit {
     if(this.registrationForm.invalid){
       return;
     }
-    console.log(this.registrationForm.value);
     this.patientService.registerPatient(this.registrationForm.value).subscribe(
       res=>{
         if(res['success'])
           this.router.navigateByUrl('login');
       },
       err=>{
-
-      }
-    );
+        console.log(err);
+      });
+      
     this.success = true;
 
   }
