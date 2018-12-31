@@ -56,12 +56,14 @@ router.post('/authenticate', (req, res, next) => {
 //Profile
 router.get('/profile', (req, res, next) => {
     //res.send('PROFILE');
-    Patient.find((err, patient) => {
+    const userName = req.body.userName;
+    Patient.findPatientByUsername(userName, (err, patient) => {
         if (err)
             console.log(err);
         else
-            res.json(patient);
+            res.json(patient);  
     });
+    return;
 });
 
 router.get('/getPatient', (req, res) => {

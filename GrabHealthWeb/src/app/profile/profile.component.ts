@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
+import patient from '../patient/patient.component';
 
 @Component({
   selector: 'app-profile',
@@ -17,12 +18,13 @@ export class ProfileComponent implements OnInit {
     this.patientService.getPatientDetails().subscribe(
       res => {
         //this.patient = res.patient;
-        this.patient = res['patient'];
+        console.log(res);
+        this.patient = res;
       },
       err => {
         console.log(err);
         return false;
     });
-  }
+  } 
 
 }

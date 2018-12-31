@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; 
+import { FormBuilder, FormControl, FormGroup, Validators, FormArray } from '@angular/forms'; 
 import { CustomValidators } from '../custom-validators';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
@@ -23,7 +23,7 @@ export class PatientComponent implements OnInit {
     username: new FormControl('userName'),
     password: new FormControl('password'),
   });
- 
+  
   submitted = false;
   success = false;
 
@@ -47,13 +47,10 @@ export class PatientComponent implements OnInit {
                                       CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true }),
                                       Validators.minLength(8)])],
       confirmPassword: ['', Validators.required]
-      
-
     },
     {
       validator: CustomValidators.passwordMatchValidator
-    }
-    );
+    });
   }
 
   onSubmit(){
