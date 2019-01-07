@@ -10,6 +10,8 @@ const app = express();
 const router = express.Router();
 const patient = require('./routes/patient');
 const config = require('./config/database');
+const passport = require('passport');
+
 //Helmet middleware
 app.use(helmet());
 
@@ -27,8 +29,15 @@ app.use(function(req, res, next) {
 
 app.use(express.static(path.join(__dirname, 'src')));
 
+//Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+//Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport')(passport);
 
 app.use('/patient', patient);
 //External Server

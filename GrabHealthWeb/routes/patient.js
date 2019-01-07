@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Patient = require('../models/patient');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const config = require('../config/database');
 
 //Register
 router.post('/register', (req, res, next) => {
@@ -19,6 +22,7 @@ router.post('/register', (req, res, next) => {
         userName: req.body.userName,
         password: req.body.password
     });
+
     Patient.addPatient(newPatient, (err, patient) => {
         if(err){
             console.log(err);
@@ -45,7 +49,29 @@ router.post('/authenticate', (req, res, next) => {
             if (err) {
                 console.log(err);
             } if (isMatch) {
-                res.json ({success: true, msg: "Successful Login"})
+                const token = jwt.sign({data: patient}, config.secret, {
+                    expiresIn: 604800 // 1 week
+                });
+
+                res.json ({
+                    success: true,
+                    token: 'JWT '+token,
+                    patient: {
+                        id: patient._id,
+                        firstName: patient.firstName,
+                        lastName: patient.lastName,
+                        nric: patient.nric,
+                        contactNo: patient.contactNo,
+                        gender: patient.gender,
+                        dob: patient.dob,
+                        address: patient.address,
+                        postalCode: patient.postalCode,
+                        nationality: patient.nationality,
+                        attach: patient.attach,
+                        userName: patient.userName
+                    },
+                    msg: "Successful Login"
+                });
             } else {
                return res.json({success: false, msg: "Wrong Password"})
             }
@@ -54,23 +80,15 @@ router.post('/authenticate', (req, res, next) => {
 });
 
 //Profile
-router.get('/profile', (req, res, next) => {
-    //res.send('PROFILE');
-    const userName = req.body.userName;
-    Patient.findPatientByUsername(userName, (err, patient) => {
-        if (err)
-            console.log(err);
-        else
-            res.json(patient);  
-    });
-    return;
+router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+    res.json({patient: req.patient});
 });
 
 router.get('/getPatient', (req, res) => {
     Patient.find((err, patient) => {
         if (err)
             console.log(err);
-        else
+        else 
             res.json(patient);
     });
 });

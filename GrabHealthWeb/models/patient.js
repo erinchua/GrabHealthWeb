@@ -61,10 +61,6 @@ module.exports.getPatientById = function(id, callback){
 }
 
 module.exports.getPatientByUsername = function(username, callback){
-    return Patient.findOne({userName: username}, callback);
-}
-
-module.exports.findPatientByUsername = function(username, callback){
     Patient.findOne({userName: username}, callback);
 }
 

@@ -31,13 +31,14 @@ export class LoginComponent implements OnInit {
 
     this.patientService.authenticatePatient(this.loginForm.value).subscribe(
       res => {
-        console.log(res);
         if(res['success']) {
+          this.patientService.storePatientData(res['token'], res['patient']);
           this.router.navigateByUrl('profile');
         }
       },
       err => {
         console.log(err);
+        this.router.navigateByUrl('login');
       } 
     )
 
