@@ -18,6 +18,12 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { FindClinicComponent } from './find-clinic/find-clinic.component';
 import { PatientService } from './services/patient.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
+import { JwtModule } from '@auth0/angular-jwt';
+import { AuthGuard } from 'guards/auth.guard';
+
+export function getToken(): string {
+  return localStorage.getItem('id_token');
+}
 
 @NgModule({
   declarations: [
@@ -37,9 +43,14 @@ import { FlashMessagesModule } from 'angular2-flash-messages';
     NgbModule.forRoot(),
     HttpClientModule,
     AngularFontAwesomeModule,
-    FlashMessagesModule.forRoot()
+    FlashMessagesModule.forRoot(),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: getToken
+      }
+    }),
   ],
-  providers: [IssueService, PatientService],
+  providers: [IssueService, PatientService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

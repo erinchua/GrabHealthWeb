@@ -5,18 +5,35 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a routerLink="/find-clinic" routerLinkActive="active" *ngIf="patientService.loggedIn()" class="nav-link">Find Clinic</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a routerLink="/patient" class="nav-link">Sign Up</a>
+        <a routerLink="/patient" routerLinkActive="active" *ngIf="!patientService.loggedIn()" class="nav-link">Sign Up</a>
       </li>
       <li class="nav-item">
-        <a routerLink="/login" class="nav-link">Login</a>
+        <a routerLink="/login" routerLinkActive="active" *ngIf="!patientService.loggedIn()" class="nav-link">Login</a>
+      </li>
+      <li class="nav-item dropdown" *ngIf="patientService.loggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/profile" routerLinkActive="active">Profile</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Booking</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Book A Session</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Booking Status</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">View History</a>
+        </div>
       </li>
       <li class="nav-item">
-        <a (click)="onLogoutClick()" class="nav-link">Logout</a>
-      </li>
-      <li class="nav-item" *ngIf="authService.loggedIn()">
-        <a routerLink="/profile" class="nav-link">Profile</a>
+        <a (click)="onLogoutClick()" routerLinkActive="active" *ngIf="patientService.loggedIn()" class="nav-link">Logout</a>
       </li>
     </ul>
   </div>

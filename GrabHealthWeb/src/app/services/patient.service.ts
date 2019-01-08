@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class PatientService {
@@ -7,7 +8,7 @@ export class PatientService {
     authToken: any;
     patient: any;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, public jwtHelperService : JwtHelperService) {}
 
     registerPatient(patient){
         let headers = new HttpHeaders();
@@ -45,6 +46,15 @@ export class PatientService {
         this.authToken = null;
         this.patient = null;
         localStorage.clear();
+    }
+
+    loggedIn(){
+        if (this.loadToken) {
+            if (!this.jwtHelperService.isTokenExpired(this.authToken))
+                return true;
+        } else {
+            return false;
+        }
     }
 
 }
