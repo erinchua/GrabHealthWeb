@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
-
+const Queue = require('./queue');
+const PendingList = require('./pendinglist');
 const ClinicSchema = mongoose.Schema({
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        auto: false
+    },
     name: {
         type: String,
         required: true,
@@ -30,6 +35,14 @@ const ClinicSchema = mongoose.Schema({
     }
 });
 
+ClinicSchema.pre('remove', function(next) {
+    // 'this' is the client being removed. Provide callbacks here if you want
+    // to be notified of the calls' result.
+    PendingList.deleteOne({clinic: this._id}).exec();
+    Queue.deleteOne({clinic: this._id}).exec();
+    next();
+});
+
 const Clinic = module.exports = mongoose.model('Clinic', ClinicSchema);
 
 module.exports.getClinicById = function(id, callback) {
@@ -46,19 +59,6 @@ module.exports.addClinic = function(newClinic, callback) {
     newClinic.save(callback);
 }
 
+
 ClinicSchema.plugin(uniqueValidator, { message: "is already taken. "});
-
-// Clinic.schema.path('name').validate(function (value, respond) {
-//     Clinic.findOne({ name: value}, function (err, clinic) {
-//         if(clinic) return false;
-//         else return true;
-//     });
-// }, "This clinic name is already registered")
-
-// Clinic.schema.path('clinicLicenseNo').validate(function (value) {
-//     Clinic.findOne({ clinicLicenseNo: value}, function (err, clinic) {
-//         if(clinic) return false;
-//         else return true;
-//     });
-// }, "This clinic license no is already registered")
 
