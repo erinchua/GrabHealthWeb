@@ -11,6 +11,7 @@ const router = express.Router();
 const patient = require('./routes/patient');
 const config = require('./config/database');
 const passport = require('passport');
+//const session = require('express-session');
 
 //Helmet middleware
 app.use(helmet());
@@ -33,10 +34,18 @@ app.use(express.static(path.join(__dirname, 'src')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Express Session
+// app.use(session({
+//     secret: 'secret',
+//     resave: true,
+//     saveUninitialized: true
+// }));
+
 //Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
+//Passport Config
 require('./config/passport')(passport);
 
 app.use('/patient', patient);

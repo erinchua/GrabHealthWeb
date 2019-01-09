@@ -14,14 +14,14 @@ export class ProfileComponent implements OnInit {
   constructor(private router : Router, private patientService : PatientService) { }
 
   ngOnInit() {
-    this.patientService.getPatientDetails().subscribe(
-      res => {
-        this.patient = res['patient'];
-      },
-      err => {
-        console.log(err);
-        return false;
-    });
+    // this.patientService.getPatientDetails().subscribe(
+    //   res => {
+    //     this.patient = res['patient'];
+    //   },
+    //   err => {
+    //     console.log(err);
+    //     return false;
+    // });
   } 
 
 }
