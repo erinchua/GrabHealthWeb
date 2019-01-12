@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PatientService } from '../services/patient.service';
-import { WindowService } from '../services/window.service';
-import * as firebase from 'firebase';
-import { PhoneNumber } from '../phone-number';
 
 @Component({
   selector: 'app-login',
@@ -16,12 +13,8 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   submitted = false;
   success = false;
-  windowRef: any;
-  phoneNumber = new PhoneNumber();
-  verificationCode: string;
-  patient: any;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private patientService : PatientService, private windowService : WindowService) { 
+  constructor(private formBuilder: FormBuilder, private router: Router, private patientService : PatientService) { 
     this.loginForm = this.formBuilder.group({
       userName: ['', Validators.required],
       password: ['', Validators.required]
@@ -53,35 +46,5 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.windowRef = this.windowService.windowRef
-    this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container')
-
-    this.windowRef.recaptchaVerifier.render()
   }
-
-  sendLoginCode() {
-    const appVerifier = this.windowRef.recaptchaVerifier;
-
-    const num = this.phoneNumber.e164;
-
-    firebase.auth().signInWithPhoneNumber(num, appVerifier)
-            .then(result => {
-
-                this.windowRef.confirmationResult = result;
-
-            })
-            .catch( error => console.log(error) );
-  }
-
-  verifyLoginCode() {
-    this.windowRef.confirmationResult
-                  .confirm(this.verificationCode)
-                  .then( result => {
-
-                    this.patient = result.patient;
-
-    })
-    .catch( error => console.log(error, "Incorrect code entered?"));
-  }
-
 }

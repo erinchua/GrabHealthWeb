@@ -1,38 +1,152 @@
 <div class="container">
   <div class="row">
-    <h5><u>Find Clinics Near You</u></h5>
-    <input class="text-line text-center" type="text" placeholder="Search">
+    <table class="table" id="header">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col"><h3><b>Book A Clinic</b></h3></th>
+          <th scope="col">
+            <form class="form-inline my-2 float-right">
+              <input class="form-control mr-sm-2" type="text" placeholder="Search">
+              <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+          </th>
+        </tr>
+      </thead>
+    </table>
   </div>
 
   <div class="container text-center">
-    <table class="table">
+    <table class="table table-borderless">
       <thead>
         <tr>
-          <th scope="col">West</th>
-          <th scope="col">North</th>
-          <th scope="col">Central</th>
-          <th scope="col">Northeast</th>
-          <th scope="col">East</th>
+          <th scope="col"><button type="button" (click)="West = !West" class="btn btn-outline-primary">West</button></th>
+          <th scope="col"><button type="button" (click)="North = !North" class="btn btn-outline-primary">North</button></th>
+          <th scope="col"><button type="button" (click)="Central = !Central" class="btn btn-outline-primary">Central</button></th>
+          <th scope="col"><button type="button" (click)="Northeast = !Northeast" class="btn btn-outline-primary">Northeast</button></th>
+          <th scope="col"><button type="button" (click)="East = !East" class="btn btn-outline-primary">East</button></th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>Boon Lay</td>
-          <td>Marsiling</td>
-          <td>Alexandra</td>
-          <td>Ang Mo Kio</td>
-          <td>Bedok</td>
+    </table>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr *ngIf="West || North || Central || Northeast || East">
+          <th scope="col">Clinic Name</th>
+          <th scope="col">Address</th>
+          <th scope="col">Contact</th>
+          <th scope="col">Location</th>
+          <th scope="col">Book</th>
         </tr>
-        <tr>
-          <td>Bukit Batok</td>
-          <td>Sembawang</td>
-          <td>Aljunied</td>
-          <td>Buangkok</td>
-          <td>Bedok Reservoir</td>
+      </thead>
+      <tbody *ngFor="let clinic of clinics">
+        <tr *ngIf="clinic.location === 'West' && West || clinic.location === 'North' && North || clinic.location === 'Central' && Central || clinic.location === 'Northeast' && Northeast || clinic.location === 'East' && East">
+          <td>{{ clinic.name }}</td>
+          <td>{{ clinic.address }}</td>
+          <td>{{ clinic.contactNo }}</td>
+          <td>{{ clinic.location }}</td>
+          <td><button type="button" (click)="viewBookingDetails(clinic)" class="btn btn-outline-secondary" data-toggle="modal" data-target="#bookingDetailsModal"><i class="fa fa-book"></i> Book</button></td>
         </tr>
       </tbody>
     </table>
   </div>
-   
-  
 </div>
+
+<!--Booking Details Modal Box-->
+<div>
+  <div class="modal fade" id="bookingDetailsModal" tabindex="-1" role="dialog" aria-labelledby="bookingDetailsModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookingDetailsModalTitle"><strong>Booking Details</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row rowspacing">
+            <div class="col">
+              <p><b>Date:</b> {{today | date: 'dd/MM/yyyy'}}</p>
+            </div>
+            <div class="col">
+                <p><b>Time:</b> {{today | date: 'hh:mm:ss a'}}</p>
+            </div>
+          </div>
+
+          <div class="row rowspacing">
+            <div class="col">
+              <p *ngIf="clinic"><b>Name:</b> {{ clinic.name }}</p>
+              <p *ngIf="clinic"><b>Address:</b> {{ clinic.address }}</p>
+            </div>
+          </div>
+
+          <div class="row rowspacing">
+            <div class="col">
+              <p *ngFor="let session of sessions"><b>{{ session.name }}: </b>{{ session.value }}</p>
+            </div>
+          </div>
+
+          <div class="row rowspacing">
+            <div class="col-6 col-sm-4">
+              <p><b>Select Session:</b></p>
+            </div>
+            <div class="col-6 col-sm-4">
+              <select class="form-control" id="selectSession" [(ngModel)]="selectSession">
+                <option></option>
+                <option *ngFor="let session of sessions">{{session.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#confirmBookingModal" data-dismiss="modal">Next</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End of Booking Details Modal Box-->
+
+<!--Confirm Booking Modal Box-->
+<div>
+  <div class="modal fade" id="confirmBookingModal" tabindex="-1" role="dialog" aria-labelledby="confirmBookingModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmBookingModalTitle"><strong>Confirm Booking</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row rowspacing">
+            <div class="col">
+              <p><b>Please check the following details:</b></p>
+            </div>
+          </div>
+
+          <div class="border">
+            <div class="row rowspacing">
+              <div class="col">
+                <p>The clinic you have chosen is <b>{{ clinic.name }}</b>.</p>
+                <p>The session you have selected is <b>{{ selectSession }}</b>.</p>
+                <p>To confirm and book, click on 'Book'. Thank you!</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#bookingDetailsModal" data-dismiss="modal">Back</button>
+          <button type="button" class="btn btn-secondary" (click)="onBooking()">Book</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End of Confirm Booking Modal Box-->

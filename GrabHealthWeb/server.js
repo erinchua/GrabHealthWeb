@@ -11,7 +11,8 @@ const router = express.Router();
 const patient = require('./routes/patient');
 const config = require('./config/database');
 const passport = require('passport');
-//const session = require('express-session');
+// const Nexmo = require('nexmo');
+// const socketio = require('socket.io');
 
 //Helmet middleware
 app.use(helmet());
@@ -33,13 +34,6 @@ app.use(express.static(path.join(__dirname, 'src')));
 //Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-
-// Express Session
-// app.use(session({
-//     secret: 'secret',
-//     resave: true,
-//     saveUninitialized: true
-// }));
 
 //Passport Middleware
 app.use(passport.initialize());

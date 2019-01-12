@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { Http, HttpModule } from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,8 @@ import { PatientService } from './services/patient.service';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AuthGuard } from 'guards/auth.guard';
 import { FormsModule } from '@angular/forms';
+import { BookingStatusComponent } from './booking-status/booking-status.component';
+import { VisitHistoryComponent } from './visit-history/visit-history.component';
 
 export function getToken(): string {
   return localStorage.getItem('id_token');
@@ -35,7 +37,9 @@ export function getToken(): string {
     LoginComponent,
     ProfileComponent,
     EditProfileComponent,
-    FindClinicComponent
+    FindClinicComponent,
+    BookingStatusComponent,
+    VisitHistoryComponent
   ],
   imports: [
     BrowserModule,

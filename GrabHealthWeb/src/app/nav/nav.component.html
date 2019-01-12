@@ -5,14 +5,6 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarColor01">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a routerLink="/find-clinic" routerLinkActive="active" *ngIf="patientService.loggedIn()" class="nav-link">Find Clinic</a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="collapse navbar-collapse" id="navbarColor01">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <a routerLink="/patient" routerLinkActive="active" *ngIf="!patientService.loggedIn()" class="nav-link">Sign Up</a>
@@ -24,12 +16,9 @@
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome</a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/profile" routerLinkActive="active">Profile</a>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Booking</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Book A Session</a>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">Booking Status</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="#" routerLinkActive="active">View History</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/find-clinic" routerLinkActive="active">Book A Clinic</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/booking-status" routerLinkActive="active">Booking Status</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/visit-history" routerLinkActive="active">View Visit History</a>
         </div>
       </li>
       <li class="nav-item">
