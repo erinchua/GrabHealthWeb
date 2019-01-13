@@ -34,7 +34,8 @@ let PatientSchema = new Schema({
     },
     postalCode: {
         type: Number,
-        required: true
+        required: true,
+        default: 1000000000
     },
     nationality: {
         type: String,
@@ -50,6 +51,11 @@ let PatientSchema = new Schema({
     },
     password: {
         type: String,
+        required: true,
+        default: "Non-Applicable"
+    },
+    isWalkIn: {
+        type: Boolean,
         required: true
     }
 });
@@ -72,6 +78,11 @@ module.exports.addPatient = function(newPatient, callback){
             newPatient.save(callback);
         });
     });
+}
+
+module.exports.addWalkInPatient = function(newPatient, callback){
+    newPatient.save(callback);
+    
 }
 
 module.exports.comparePassword = function(patientPassword, hash, callback){

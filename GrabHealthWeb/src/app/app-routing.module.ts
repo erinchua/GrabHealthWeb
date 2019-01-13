@@ -19,7 +19,7 @@ const routes: Routes = [
   {path: 'edit-profile', component: EditProfileComponent},
   {path: 'find-clinic', component: FindClinicComponent},
   {path: 'booking-status', component: BookingStatusComponent},
-  {path: 'visit-history', component: VisitHistoryComponent}
+  {path: 'visit-history', component: VisitHistoryComponent},
 ];
 
 @NgModule({

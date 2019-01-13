@@ -3,6 +3,23 @@ const router = express.Router();
 const Clinic = require("../models/clinic");
 const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
+const Patient = require("../models/patient");
+/*const Nexmo = require('nexmo');
+const nexmo = new Nexmo({
+  apiKey: '53bbc906',
+  apiSecret: 'e9sA3XAWOEZnsZd5'
+});
+
+nexmo.message.sendSms(
+    'Nexmo', '6590189969', 'test',
+    (err, responseData) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.dir(responseData);
+        }
+    }
+);*/
 
 router.post('/createClinic', (req, res) => {
     let newClinic = new Clinic(req.body);
@@ -64,6 +81,26 @@ router.post('/removeClinic', (req, res) => {
 });
 
 
+router.post('/registerWalkInPatient', (req, res) => {
+    let newWalkInPatient = new Patient(req.body);
+    newWalkInPatient.isWalkIn = true;
+    Patient.addWalkInPatient(newWalkInPatient, (err, patient) => {
+        if(err){
+            return res.json({success: false, msg: err});
+        }
+        if(patient){
+            return res.json({success: true, msg: "Patient successfully registered"});
+
+        } else {
+            return res.json({success: false, msg: "Patient cannot be registered "});
+        }            
+
+        
+    });
+
+});
+
+
 // Add patient to queue
 router.post('/addPatientToQueue', (req, res) => {
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
@@ -71,18 +108,23 @@ router.post('/addPatientToQueue', (req, res) => {
             res.json({success: false, msg:'Patient cannot be found'});
         }
         if(patient){
-            Queue.find({"clinic": req.user.clinic}).exec(function(err, inQueue) {
+            Queue.find({"clinic": req.body.clinic}).exec(function(err, queueList) {
                 if(err)
                     return res.json({success: false, msg: err}).status(404);
-                if(inQueue) {
-                    inQueue.push(req.body.patient);
-                    inQueue.save();
-                    // patient.list.remove(patient._id);
-                    // patient.save();
-                    // axios.post('http://localhost:4000/GrabHealthWeb/addPatientToQueue', {
-                    //     firstName: req.body.patient.firstName,
-                    //     lastName: req.body.patient.lastName
-                    // })
+                if(queueList) {
+                    queueList.patients.push(req.user._id);
+                    queueList.save(function(err2, queueListSaved) {
+                        if(err2){
+                            return res.json({success: false, msg: err2}).status(404);
+                        } else {
+                            if(queueListSaved){
+                                return res.json({succes: true, msg: 'Patient has successfully been added to queue'});
+                            } else {
+                                return res.json({succes: false, msg: 'Patient cannot be added to queue'});
+                            }
+                        }
+                    });
+                   
                 }
                 
             })
