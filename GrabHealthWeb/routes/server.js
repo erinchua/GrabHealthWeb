@@ -64,4 +64,31 @@ router.post('/removeClinic', (req, res) => {
 });
 
 
+// Add patient to queue
+router.post('/addPatientToQueue', (req, res) => {
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err){
+            res.json({success: false, msg:'Patient cannot be found'});
+        }
+        if(patient){
+            Queue.find({"clinic": req.user.clinic}).exec(function(err, inQueue) {
+                if(err)
+                    return res.json({success: false, msg: err}).status(404);
+                if(inQueue) {
+                    inQueue.push(req.body.patient);
+                    inQueue.save();
+                    // patient.list.remove(patient._id);
+                    // patient.save();
+                    // axios.post('http://localhost:4000/GrabHealthWeb/addPatientToQueue', {
+                    //     firstName: req.body.patient.firstName,
+                    //     lastName: req.body.patient.lastName
+                    // })
+                }
+                
+            })
+        }
+    })
+}); 
+
+
 module.exports = router;
