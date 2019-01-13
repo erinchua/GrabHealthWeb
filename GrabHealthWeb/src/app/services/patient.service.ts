@@ -27,7 +27,10 @@ export class PatientService {
         this.loadToken();
         headers.append('Authorization', this.authToken);
         headers.append('Content-Type', 'application/json');
-        return this.http.get('http://localhost:4000/patient/profile', {headers : headers});
+        return this.http.get('http://localhost:4000/patient/profile', {headers : new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token"),
+            'Content-Type': 'application/json'
+        })});
     }
 
     storePatientData(token, patient){
@@ -55,6 +58,26 @@ export class PatientService {
         } else {
             return false;
         }
+    }
+
+    //Get Clinic List
+    getClinics(){
+        return this.http.get('http://localhost:4000/patient/getClinic');
+    }
+
+    //Book Clinic
+    bookClinics(clinic){
+        return this.http.post('http://localhost:4000/patient/bookClinic', clinic, {headers: new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })});
+    }
+
+    //Get Patient's Booking
+    getBookedClinics(){
+        let headers = new HttpHeaders();
+        return this.http.get('http://localhost:4000/patient/getBookedClinic', {headers : new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })});
     }
 
 }

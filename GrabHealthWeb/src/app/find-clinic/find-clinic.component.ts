@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'; 
+import { PatientService } from '../services/patient.service';
 
 @Component({
   selector: 'app-find-clinic',
@@ -7,9 +9,45 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FindClinicComponent implements OnInit {
 
-  constructor() { }
+  clinic: any;
+  clinics: Array<any>;
+
+  today: number = Date.now();
+
+  sessions = [
+    { name: "Session 1", value: "0900 - 1300" },
+    { name: "Session 2", value: "1400 - 1800" }
+  ];
+
+  constructor(private router : Router, private patientService : PatientService) {
+   }
 
   ngOnInit() {
+    this.getClinics();
+  }
+
+  getClinics(){
+    this.patientService.getClinics().subscribe(
+      res=> {
+        this.clinics = res['clinics'];
+      }, 
+      err=> {
+        console.log(err);
+      });
+  }
+
+  viewBookingDetails(clinic){
+    this.clinic = clinic;
+  }
+
+  onBooking(){
+    this.patientService.bookClinics(this.clinic).subscribe(
+      res=> {
+        console.log(res);
+      }, 
+      err=> {
+        console.log(err);
+      });
   }
 
 }

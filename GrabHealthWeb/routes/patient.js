@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Patient = require('../models/patient');
+const Clinic = require('../models/clinic');
+const PendingList = require('../models/pendinglist');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
@@ -81,9 +83,10 @@ router.post('/authenticate', (req, res, next) => {
 
 //Profile
 router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-    res.json({patient: req.patient});
+    res.json({patient: req.user});
 });
 
+//Patient List
 router.get('/getPatient', (req, res) => {
     Patient.find((err, patient) => {
         if (err)
@@ -93,5 +96,56 @@ router.get('/getPatient', (req, res) => {
     });
 });
 
+//Clinic List
+router.get('/getClinic', (req, res) => {
+    Clinic.find({})
+        .exec(function (err, clinics){
+            res.send({'clinics': clinics}).status(201);
+        }) 
+});
+
+//Book Clinic
+router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+    console.log(req.user._id);
+    PendingList.findOne({clinic: req.body._id}, (err, pendingList) => {
+        if (err){
+            return res.json({success: false, msg: "Error"});
+        } else {
+            if (pendingList){
+                //res.json(req.user._id);
+                pendingList.patients.push(req.user._id);
+                pendingList.save(function (err, pendingList) {
+                    if (err) {
+                        return res.json({success: false, msg: "Error"});
+                    } else {
+                        res.send(pendingList);
+                    }
+                });
+                //return res.json({success: true, msg: "You have successfully booked!"});
+            } else {
+                return res.json({success: false, msg: "Error"});
+            }
+        }
+        
+    });
+});
+
+router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+    PendingList.find({patients: req.user._id}, (err, bookedList) => {
+        if (err){
+            console.log("nonono"); 
+        } 
+        console.log(bookedList);
+        if (bookedList){
+            // Clinic.collection.find({name}, (err, clinics) => {
+            //     if (err) {
+            //         console.log("err")
+            //     } else {
+            //         console.log(clinics);
+            //     }
+            // });
+        }
+    })
+});
 
 module.exports = router;

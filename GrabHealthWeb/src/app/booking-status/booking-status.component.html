@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="row">
+    <table class="table" id="header">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col"><h3><b>Booking Status</b></h3></th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <div class="container text-center">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">Reference Number</th>
+          <th scope="col">Clinic Name</th>
+          <th scope="col">Booking Status</th>
+          <th scope="col">Remarks</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let clinic of clinics">
+        <tr>
+          <td></td>
+          <td>{{ clinic.name }}</td>
+          <td></td>
+          <td><button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#cancelModal"><i class="fa fa-times-circle"></i> Cancel</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!--Cancel Modal Box-->
+<div>
+  <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelModalTitle"><strong>Confirm Cancellation</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row rowspacing">
+            <div class="col">
+              <p><b>Please check the following details:</b></p>
+            </div>
+          </div>
+
+          <div class="row rowspacing">
+            <div class="col">
+              <p>You have -- more patients infront of you.</p>
+              <p>Do you want to cancel your booking?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal">No</button>
+          <button type="button" class="btn btn-outline-primary">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--End of Cancel Modal Box-->
