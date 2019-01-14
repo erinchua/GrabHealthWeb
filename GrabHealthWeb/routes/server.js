@@ -4,6 +4,7 @@ const Clinic = require("../models/clinic");
 const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
+const WalkInPatient = require("../models/walkinpatient");
 /*const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
   apiKey: '53bbc906',
@@ -86,6 +87,7 @@ router.post('/registerWalkInPatient', (req, res) => {
     newWalkInPatient.isWalkIn = true;
     Patient.addWalkInPatient(newWalkInPatient, (err, patient) => {
         if(err){
+            console.log("failed " + err)
             return res.json({success: false, msg: err});
         }
         if(patient){
