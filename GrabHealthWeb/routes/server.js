@@ -5,6 +5,8 @@ const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
 const WalkInPatient = require("../models/walkinpatient");
+
+
 /*const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
   apiKey: '53bbc906',
@@ -82,10 +84,9 @@ router.post('/removeClinic', (req, res) => {
 });
 
 
+// Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
-    let newWalkInPatient = new Patient(req.body);
-    newWalkInPatient.isWalkIn = true;
-    Patient.addWalkInPatient(newWalkInPatient, (err, patient) => {
+    Patient.findOne({nric: req.body.patient}, (err, patient) => {
         if(err){
             console.log("failed " + err)
             return res.json({success: false, msg: err});
@@ -96,8 +97,26 @@ router.post('/registerWalkInPatient', (req, res) => {
         } else {
             return res.json({success: false, msg: "Patient cannot be registered "});
         }            
+    });
 
-        
+});
+
+
+// Update patient details <TBC>
+router.post('/updateWalkInPatientDetails', (req, res) => {
+    let newWalkInPatient = new Patient(req.body);
+    newWalkInPatient.isWalkIn = true;
+    Patient.addWalkInPatient(newWalkInPatient, (err, patient) => {
+        if(err){
+            console.log("failed " + err)
+            return res.json({success: false, msg: err});
+        }
+        if(patient){
+            return res.json({success: true, msg: "Patient details successfully updated!"});
+
+        } else {
+            return res.json({success: false, msg: "Patient cannot be updated successfully!"});
+        }            
     });
 
 });
@@ -110,6 +129,9 @@ router.post('/addPatientToQueue', (req, res) => {
             res.json({success: false, msg:'Patient cannot be found'});
         }
         if(patient){
+            let newQueueList = new QueueList({
+                clinic: clinic._id
+            });
             Queue.find({"clinic": req.body.clinic}).exec(function(err, queueList) {
                 if(err)
                     return res.json({success: false, msg: err}).status(404);
@@ -133,6 +155,8 @@ router.post('/addPatientToQueue', (req, res) => {
         }
     })
 }); 
+
+
 
 
 module.exports = router;
