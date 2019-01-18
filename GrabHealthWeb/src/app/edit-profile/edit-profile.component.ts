@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 @Component({
   selector: 'app-edit-profile',
@@ -11,7 +12,7 @@ export class EditProfileComponent implements OnInit {
 
   patient:Object;
 
-  constructor(private router : Router, private patientService : PatientService) { }
+  constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
 
   ngOnInit() {
     this.patientService.getPatientDetails().subscribe(
@@ -23,5 +24,25 @@ export class EditProfileComponent implements OnInit {
         return false;
     });
   }
+
+
+  onSaved(){
+    var flashMessagesService = this.flashMessagesService;
+
+    this.patientService.editPatientDetails(this.patient).subscribe(
+      res => {
+        console.log(res);
+        if(res['success']) {
+          this.patientService.getPatientDetails();
+          flashMessagesService.show('Profile have been successfully updated', { cssClass: 'alert-success', timeout: 3000});
+        } else {
+          flashMessagesService.show('Error', { cssClass: 'alert-danger', timeout: 3000});
+        }
+      },
+      err => {
+        console.log(err);
+      });
+  }
+
 
 }

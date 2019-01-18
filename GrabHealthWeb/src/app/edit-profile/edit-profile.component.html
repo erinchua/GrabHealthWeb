@@ -8,41 +8,44 @@
     <div class="container col-sm-2 float-left text-center" id="rightInner">
         <img src="{{patient.attach}}" width="150px"/>
         <label>Username:</label>
-        <input type="text" class="text-line text-center" value="{{patient.userName}}" disabled>
+        <input type="text" class="text-line text-center" [(ngModel)]="patient.userName"  value="{{patient.userName}}" disabled>
         <br>
         <label>Password:</label>
-        <input type="password" class="form-control text-line text-center" value="{{patient.password}}">
+        <input type="password" class="form-control text-line text-center" [(ngModel)]="patient.password" value="{{patient.password}}">
+        <br>
+        <label>Confirm Password:</label>
+        <input type="password" class="form-control text-line text-center" [(ngModel)]="patient.confirmPassword" value="{{patient.confirmPassword}}">
     </div>
     
     <div class="container col-sm-9 float-right" id="rightInner">
       <label>First Name:</label>
-      <input type="text" class="text-line text-center" value="{{patient.firstName}}" disabled>
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.firstName" value="{{patient.firstName}}" disabled>
       <br>
       <label>Last Name:</label>
-      <input type="text" class="text-line text-center" value="{{patient.lastName}}" disabled>
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.lastName" value="{{patient.lastName}}" disabled>
       <br>
       <label>NRIC/Passport No.:</label>
-      <input type="text" class="text-line text-center" value="{{patient.nric}}" disabled>
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.nric" value="{{patient.nric}}" disabled>
       <br>
       <label>Gender:</label>
-      <input type="text" class="text-line text-center" value="{{patient.gender}}" disabled>
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.gender" value="{{patient.gender}}" disabled>
       <br>
       <label>Contact No.:</label>
-      <input type="text" class="form-control text-line text-center" value="{{patient.contactNo}}">
+      <input type="text" class="form-control text-line text-center" [(ngModel)]="patient.contactNo" value="{{patient.contactNo}}">
       <br>
       <label>Date of Birth:</label>
-      <input type="text" class="text-line text-center" value="{{patient.dob}}" disabled>
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.dob" value="{{patient.dob}}" disabled>
       <br>
       <label>Nationality:</label>
-      <input type="text" class="text-line text-center" value="{{patient.nationality}}" disabled>  
+      <input type="text" class="text-line text-center" [(ngModel)]="patient.nationality" value="{{patient.nationality}}" disabled>  
       <br>
       <label>Address:</label>
-      <input type="text" class="form-control text-line text-center" value="{{patient.address}}">
+      <input type="text" class="form-control text-line text-center" [(ngModel)]="patient.address" value="{{patient.address}}">
       <br>
       <label>Postal Code:</label>
-      <input type="text" class="form-control text-line text-center" value="{{patient.postalCode}}">
+      <input type="text" class="form-control text-line text-center" [(ngModel)]="patient.postalCode" value="{{patient.postalCode}}">
 
-      <button type="button" class="btn btn-primary float-right" id="save">Save</button>
+      <button type="button" class="btn btn-primary float-right" id="save" (click)="onSaved()">Save</button>
     </div>
 
   </div>

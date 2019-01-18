@@ -72,10 +72,15 @@ export class PatientService {
         })});
     }
 
-    //Get Patient's Booking
+    editPatientDetails(patient){
+        return this.http.post('http://localhost:4000/patient/editPatientDetail', patient, {headers : new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })});    
+    }
+
+    //Get Patient's Appointment
     getBookedClinics(){
-        let headers = new HttpHeaders();
-        return this.http.get('http://localhost:4000/patient/getBookedClinic', {headers : new HttpHeaders({
+        return this.http.get('http://localhost:4000/patient/getBookedClinic', {headers: new HttpHeaders({
             'Authorization': localStorage.getItem("id_token")
         })});
     }

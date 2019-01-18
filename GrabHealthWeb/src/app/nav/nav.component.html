@@ -14,11 +14,11 @@
       </li>
       <li class="nav-item dropdown" *ngIf="patientService.loggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Welcome</a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/profile" routerLinkActive="active">Profile</a>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/find-clinic" routerLinkActive="active">Book A Clinic</a>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/booking-status" routerLinkActive="active">Booking Status</a>
-          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/visit-history" routerLinkActive="active">View Visit History</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/find-clinic" routerLinkActive="active">Make An Appointment</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/booking-status" routerLinkActive="active">Appointment Status</a>
+          <a class="dropdown-item" *ngIf="patientService.loggedIn()" routerLink="/visit-history" routerLinkActive="active">Visit History</a>
         </div>
       </li>
       <li class="nav-item">
