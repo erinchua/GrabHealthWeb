@@ -104,19 +104,33 @@ router.post('/registerWalkInPatient', (req, res) => {
 
 // Update patient details <TBC>
 router.post('/updateWalkInPatientDetails', (req, res) => {
-    let newWalkInPatient = new Patient(req.body);
-    newWalkInPatient.isWalkIn = true;
-    Patient.addWalkInPatient(newWalkInPatient, (err, patient) => {
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
-            console.log("failed " + err)
-            return res.json({success: false, msg: err});
+            res.json({success: false, msg: err});
         }
         if(patient){
-            return res.json({success: true, msg: "Patient details successfully updated!"});
-
+            patient.save(function(err2, changesMade){
+                if(err2){
+                    return res.json({success: false, msg: err2});
+                } else {
+                    if(changesMade){
+                        patient.firstName = req.body.firstName;
+                        patient.lastName = req.body.lastName;
+                        patient.nric = req.body.nric;
+                        patient.gender = req.body.gender;
+                        patient.address = req.body.address;
+                        patient.dob = req.body.dob;
+                        patient.nationality = req.body.nationality;
+                        patient.contactNo = req.body.contactNo;
+                        patient.save();
+                        return res.json({success: true, msg: "Patient details have been updated"});
+                    } else 
+                        return res.json({success: false, msg: "No changes have been made"});
+                }
+            });                   
         } else {
-            return res.json({success: false, msg: "Patient cannot be updated successfully!"});
-        }            
+            return res.json({success: false, msg: "Unable to save changes successfully"});
+        }
     });
 
 });

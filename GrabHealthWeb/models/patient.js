@@ -56,6 +56,11 @@ let PatientSchema = new Schema({
         required: true,
         default: "Non-Applicable"
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     isWalkIn: {
         type: Boolean,
         required: true,
