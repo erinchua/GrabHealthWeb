@@ -6,6 +6,8 @@ const PendingList = require('../models/pendinglist');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
+const Queue = require('../models/queue');
+
 
 //Register
 router.post('/register', (req, res, next) => {
@@ -21,7 +23,7 @@ router.post('/register', (req, res, next) => {
         postalCode: req.body.postalCode,
         nationality: req.body.nationality,
         attach: req.body.attach,
-        userName: req.body.userName,
+        email: req.body.email,
         password: req.body.password
     });
 
@@ -37,10 +39,10 @@ router.post('/register', (req, res, next) => {
 
 //Authenticate
 router.post('/authenticate', (req, res, next) => {
-    const userName = req.body.userName;
+    const email = req.body.email;
     const password = req.body.password;
 
-    Patient.getPatientByUsername(userName, (err, patient) => {
+    Patient.getPatientByEmail(email, (err, patient) => {
         if(err){
             console.log(err);
         } if (!patient){
@@ -70,7 +72,7 @@ router.post('/authenticate', (req, res, next) => {
                         postalCode: patient.postalCode,
                         nationality: patient.nationality,
                         attach: patient.attach,
-                        userName: patient.userName
+                        email: patient.email
                     },
                     msg: "Successful Login"
                 });
@@ -106,46 +108,76 @@ router.get('/getClinic', (req, res) => {
 
 //Book Clinic
 router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
-    console.log(req.user._id);
+    //console.log(req.user._id);
     PendingList.findOne({clinic: req.body._id}, (err, pendingList) => {
         if (err){
             return res.json({success: false, msg: "Error"});
         } else {
-            if (pendingList){
-                //res.json(req.user._id);
-                pendingList.patients.push(req.user._id);
-                pendingList.save(function (err, pendingList) {
-                    if (err) {
-                        return res.json({success: false, msg: "Error"});
+            if(pendingList){
+                //console.log(pendingList); //this gives all the data in database
+                PendingList.findOne({patients: {$all: [req.user._id]}}, (err, foundPatient) => {
+                    if(err)
+                        console.log(err)
+                    if(!foundPatient){
+                        pendingList.patients.push(req.user._id);
+                        Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
+                            if(err)
+                                console.log(err);
+                            if(!patientWithClinic){
+                                Patient.findById(req.user._id,(err, patient) => {
+                                    if(err)
+                                        console.log(err)
+                                    if(patient){
+                                        patient.clinics.push(pendingList.clinic);
+                                        patient.save();
+                                    }
+                                })
+                            }
+                        });
+                        pendingList.save(function (e2, checking2) {
+                            if (e2) {
+                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                            } 
+                            else {
+                                return res.json({success: true, msg: "Successfully booked!"});
+                            }
+                        });
                     } else {
-                        res.send(pendingList);
+                        return res.json({success: false, msg: "Patient already exists in pendingList"});
                     }
                 });
-                //return res.json({success: true, msg: "You have successfully booked!"});
+               
             } else {
-                return res.json({success: false, msg: "Error"});
+                return res.json({success: false, msg: "PendingList does not exist"});
             }
         }
         
     });
 });
 
-router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
-    PendingList.find({patients: req.user._id}, (err, bookedList) => {
-        if (err){
-            console.log("nonono"); 
-        } 
-        console.log(bookedList);
-        if (bookedList){
-            // Clinic.collection.find({name}, (err, clinics) => {
-            //     if (err) {
-            //         console.log("err")
-            //     } else {
-            //         console.log(clinics);
-            //     }
-            // });
+//Edit Patient Details
+router.post('/editPatientDetail', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password, contactNo: req.body.contactNo, address: req.body.address, postalCode: req.body.postalCode}, {upsert:true}, (err, patient) => {
+        if (err) {
+            res.json({success: false, msg: "Error"});
+        } else {
+            res.json({success: true, msg: "Profile have been successfully updated"});
         }
     })
+});
+
+//Get Patient's Booked Clinic
+router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+
+    Queue.find({patients: req.user._id}, (err, patientList) => {
+        if (err){
+            res.json({success: false, msg: "Error getting status"});
+        } else {
+            if (patientList){
+                console.log(patientList)
+            }
+        }
+    });
 });
 
 module.exports = router;

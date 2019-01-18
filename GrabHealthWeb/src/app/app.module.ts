@@ -23,6 +23,7 @@ import { AuthGuard } from 'guards/auth.guard';
 import { FormsModule } from '@angular/forms';
 import { BookingStatusComponent } from './booking-status/booking-status.component';
 import { VisitHistoryComponent } from './visit-history/visit-history.component';
+import { FlashMessagesModule } from 'angular2-flash-messages';
 
 export function getToken(): string {
   return localStorage.getItem('id_token');
@@ -54,7 +55,8 @@ export function getToken(): string {
         tokenGetter: getToken
       }
     }),
-    FormsModule
+    FormsModule,
+    FlashMessagesModule.forRoot()
   ],
   providers: [IssueService, PatientService, AuthGuard],
   bootstrap: [AppComponent]

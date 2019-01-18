@@ -96,10 +96,10 @@
         </div>
 
         <div class="form-group">
-          <label for="userName">Username:</label>
-            <input type = "text" class="form-control" id="userName" formControlName = "userName" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.userName.errors }">
-            <div *ngIf="submitted && registrationForm.controls.userName.errors" class="invalid-feedback">
-              <div *ngIf="registrationForm.controls.userName.errors.required">Required!</div>
+          <label for="email">Email:</label>
+            <input type = "text" class="form-control" id="email" formControlName = "email" [ngClass]="{ 'is-invalid': submitted && registrationForm.controls.email.errors }">
+            <div *ngIf="submitted && registrationForm.controls.email.errors" class="invalid-feedback">
+              <div *ngIf="registrationForm.controls.email.errors.required">Required!</div>
             </div>
         </div>
 

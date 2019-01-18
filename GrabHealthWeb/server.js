@@ -43,12 +43,15 @@ app.use(passport.session());
 require('./config/passport')(passport);
 
 app.use('/patient', patient);
+
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
 mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
 const connection = mongoose.connection;
+
+mongoose.set('useFindAndModify', false);
 
 connection.once('connected', () => {
     console.log('Connected to database ' + config.database);

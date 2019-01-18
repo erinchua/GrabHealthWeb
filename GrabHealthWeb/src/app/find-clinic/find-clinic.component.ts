@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { PatientService } from '../services/patient.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 @Component({
   selector: 'app-find-clinic',
@@ -19,7 +20,7 @@ export class FindClinicComponent implements OnInit {
     { name: "Session 2", value: "1400 - 1800" }
   ];
 
-  constructor(private router : Router, private patientService : PatientService) {
+  constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) {
    }
 
   ngOnInit() {
@@ -41,11 +42,18 @@ export class FindClinicComponent implements OnInit {
   }
 
   onBooking(){
+    var flashMessagesService = this.flashMessagesService;
+    
     this.patientService.bookClinics(this.clinic).subscribe(
-      res=> {
+      res => {
         console.log(res);
+        if (res['success']){
+          flashMessagesService.show('Successfully booked!', { cssClass: 'alert-success', timeout: 3000});
+        } else {
+          flashMessagesService.show('You have already made a booking!', { cssClass: 'alert-danger', timeout: 3000 });
+        }
       }, 
-      err=> {
+      err => {
         console.log(err);
       });
   }
