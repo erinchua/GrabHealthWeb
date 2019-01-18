@@ -20,7 +20,7 @@ export class PatientComponent implements OnInit {
     postalCode: new FormControl('postalCode'),
     nationality: new FormControl('nationality'),
     attach: new FormControl('attach'),
-    username: new FormControl('userName'),
+    email: new FormControl('email'),
     password: new FormControl('password'),
   });
   
@@ -39,7 +39,7 @@ export class PatientComponent implements OnInit {
       nationality: ['', Validators.required],
       contactNo: ['', Validators.required],
       attach: ['', Validators.required],
-      userName: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.compose([Validators.required, 
                                       CustomValidators.patternValidator(/\d/, { hasNumber: true }),
                                       CustomValidators.patternValidator(/[A-Z]/, { hasUpperCase: true }),

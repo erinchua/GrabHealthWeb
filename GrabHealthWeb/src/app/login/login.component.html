@@ -6,9 +6,9 @@
                 <div class="col-sm-12 col-md-10 col-md-offset-1">
                     <div class="form-group input-group">
                         <span class="input-group-addon"><i class="material-icons">person</i></span>
-                        <input type="text" placeholder="Username" class="form-control text-line" id="userName" formControlName="userName" [ngClass]="{ 'is-invalid': submitted && loginForm.controls.userName.errors }">
-                        <div *ngIf="submitted && loginForm.controls.userName.errors" class="invalid-feedback">
-                            <div *ngIf="loginForm.controls.userName.errors.required">Required!</div>
+                        <input type="text" placeholder="email" class="form-control text-line" id="email" formControlName="email" [ngClass]="{ 'is-invalid': submitted && loginForm.controls.email.errors }">
+                        <div *ngIf="submitted && loginForm.controls.email.errors" class="invalid-feedback">
+                            <div *ngIf="loginForm.controls.email.errors.required">Required!</div>
                         </div>
                     </div>
 

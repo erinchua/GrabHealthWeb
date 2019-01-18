@@ -23,7 +23,7 @@ router.post('/register', (req, res, next) => {
         postalCode: req.body.postalCode,
         nationality: req.body.nationality,
         attach: req.body.attach,
-        userName: req.body.userName,
+        email: req.body.email,
         password: req.body.password
     });
 
@@ -39,10 +39,10 @@ router.post('/register', (req, res, next) => {
 
 //Authenticate
 router.post('/authenticate', (req, res, next) => {
-    const userName = req.body.userName;
+    const email = req.body.email;
     const password = req.body.password;
 
-    Patient.getPatientByUsername(userName, (err, patient) => {
+    Patient.getPatientByEmail(email, (err, patient) => {
         if(err){
             console.log(err);
         } if (!patient){
@@ -72,7 +72,7 @@ router.post('/authenticate', (req, res, next) => {
                         postalCode: patient.postalCode,
                         nationality: patient.nationality,
                         attach: patient.attach,
-                        userName: patient.userName
+                        email: patient.email
                     },
                     msg: "Successful Login"
                 });
@@ -120,6 +120,20 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                         console.log(err)
                     if(!foundPatient){
                         pendingList.patients.push(req.user._id);
+                        Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
+                            if(err)
+                                console.log(err);
+                            if(!patientWithClinic){
+                                Patient.findById(req.user._id,(err, patient) => {
+                                    if(err)
+                                        console.log(err)
+                                    if(patient){
+                                        patient.clinics.push(pendingList.clinic);
+                                        patient.save();
+                                    }
+                                })
+                            }
+                        });
                         pendingList.save(function (e2, checking2) {
                             if (e2) {
                                 return res.json({success: false, msg: "Patient already exists in pendingList"});

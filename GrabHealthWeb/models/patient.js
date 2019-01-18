@@ -45,11 +45,10 @@ let PatientSchema = new Schema({
     attach: {
         type: String
     },
-    userName: {
+    email: {
         type: String,
         required: true,
-        unique: true,
-        default: shortid.generate
+        unique: true
     },
     password: {
         type: String,
@@ -60,7 +59,11 @@ let PatientSchema = new Schema({
         type: Boolean,
         required: true,
         default: false
-    }
+    },
+    clinics: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Clinic'
+    }]
 });
 
 const Patient = module.exports = mongoose.model('Patient', PatientSchema);
@@ -77,8 +80,8 @@ module.exports.getPatientById = function(id, callback){
     Patient.findById(id, callback);
 }
 
-module.exports.getPatientByUsername = function(username, callback){
-    Patient.findOne({userName: username}, callback);
+module.exports.getPatientByEmail= function(email, callback){
+    Patient.findOne({email: email}, callback);
 }
 
 module.exports.addPatient = function(newPatient, callback){
