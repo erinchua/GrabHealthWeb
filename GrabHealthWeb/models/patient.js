@@ -60,11 +60,6 @@ let PatientSchema = new Schema({
         required: true,
         unique: true
     },
-    isWalkIn: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
     clinics: [{
         type: Schema.Types.ObjectId,
         ref: 'Clinic'
