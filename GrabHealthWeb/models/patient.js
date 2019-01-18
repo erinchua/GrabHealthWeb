@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
+const shortid = require('shortid');
 
 let PatientSchema = new Schema({
     firstName: {
@@ -34,7 +35,8 @@ let PatientSchema = new Schema({
     },
     postalCode: {
         type: Number,
-        required: true
+        required: true,
+        default: 1000000000
     },
     nationality: {
         type: String,
@@ -46,15 +48,30 @@ let PatientSchema = new Schema({
     userName: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        default: shortid.generate
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        default: "Non-Applicable"
+    },
+    isWalkIn: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 
 const Patient = module.exports = mongoose.model('Patient', PatientSchema);
+
+// module.exports.setWalkInUsername = function(userName, callback){
+//     if (isWalkIn) {
+//         Patient.findOneAndUpdate({userName: userName}, {$inc: {next: 1}}, {new: true}, callback);
+//     } else {
+//         Patient.save(callback);
+//     }
+// }
 
 module.exports.getPatientById = function(id, callback){
     Patient.findById(id, callback);
@@ -72,6 +89,11 @@ module.exports.addPatient = function(newPatient, callback){
             newPatient.save(callback);
         });
     });
+}
+
+module.exports.addWalkInPatient = function(newPatient, callback){
+    newPatient.save(callback);
+    
 }
 
 module.exports.comparePassword = function(patientPassword, hash, callback){

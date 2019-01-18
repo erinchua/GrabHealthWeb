@@ -40,7 +40,7 @@ export function getToken(): string {
     EditProfileComponent,
     FindClinicComponent,
     BookingStatusComponent,
-    VisitHistoryComponent
+    VisitHistoryComponent,
   ],
   imports: [
     BrowserModule,
