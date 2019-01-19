@@ -6,13 +6,17 @@ const Issue = require('./models/Issue');
 const path = require('path');
 const helmet = require('helmet');
 const ExtServer = require('./routes/server');
-const app = express();
 const router = express.Router();
 const patient = require('./routes/patient');
 const config = require('./config/database');
 const passport = require('passport');
+const env_config = require('dotenv').config();
+var fs = require('fs');
+var https = require('https');
 // const Nexmo = require('nexmo');
 // const socketio = require('socket.io');
+
+const app = express();
 
 //Helmet middleware
 app.use(helmet());
@@ -125,4 +129,15 @@ app.use('/', router);
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
-app.listen(4000, () => console.log('Express server running on port 4000'));
+port = process.env.PORT || 4000
+
+if (process.env.HTTPS) {
+    https.createServer({
+        key: fs.readFileSync(process.env.HTTPS_KEY),
+        cert: fs.readFileSync(process.env.HTTPS_CERT)
+    }, app)
+    .listen(port, () => console.log('Express https server running on port ' + port));
+}
+else {
+    app.listen(port, () => console.log('Express server running on port ' + port));
+}
