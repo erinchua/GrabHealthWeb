@@ -51,6 +51,7 @@ app.use('/patient', patient);
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
+
 mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
 const connection = mongoose.connection;
@@ -125,6 +126,9 @@ router.route('/issues/delete/:id').get((req, res) => {
 })
 
 app.use('/', router);
+
+//Serve static files
+app.use('/GrabHealth', express.static(path.join(__dirname, 'public')))
 
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
