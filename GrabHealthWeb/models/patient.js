@@ -55,10 +55,10 @@ let PatientSchema = new Schema({
         required: true,
         default: "Non-Applicable"
     },
-    isWalkIn: {
-        type: Boolean,
+    email: {
+        type: String,
         required: true,
-        default: false
+        unique: true
     },
     clinics: [{
         type: Schema.Types.ObjectId,
