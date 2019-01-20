@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --base-href /GrabHealth/ --output-path public",
+    "build-prod": "ng build --prod --base-href /GrabHealth/ --output-path public",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
