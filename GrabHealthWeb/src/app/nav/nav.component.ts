@@ -11,7 +11,7 @@ export class NavComponent implements OnInit {
 
   appTitle: string = 'GrabHealth';
 
-  constructor(private router : Router, private patientService : PatientService) { }
+  constructor(private router : Router, public patientService : PatientService) { }
 
   ngOnInit() {
   }
