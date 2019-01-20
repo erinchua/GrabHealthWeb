@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: 'https://rawkcloud.com:60001'
+  webserverurl: 'https://rawkcloud.com:60001'
 };

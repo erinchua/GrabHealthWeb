@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment';
 @Injectable()
 export class PatientService {
 
@@ -8,7 +9,7 @@ export class PatientService {
     patient: any;
 
     constructor(private http: HttpClient, public jwtHelperService : JwtHelperService) {}
-    url = process.env.WEBSERVERURL || "http://localhost:4000";
+    url =  environment.webserverurl;
     registerPatient(patient){
         let headers = new HttpHeaders();
         headers.append('Content-Type', 'application/json');
