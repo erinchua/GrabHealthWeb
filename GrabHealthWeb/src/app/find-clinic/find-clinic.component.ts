@@ -12,7 +12,12 @@ export class FindClinicComponent implements OnInit {
 
   clinic: any;
   clinics: Array<any>;
-
+  West: boolean;
+  North: boolean;
+  Central: boolean;
+  Northeast: boolean;
+  East: boolean;
+  selectSession:any;
   today: number = Date.now();
 
   sessions = [
