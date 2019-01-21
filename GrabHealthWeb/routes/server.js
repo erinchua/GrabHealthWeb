@@ -88,23 +88,34 @@ router.post('/removeClinic', (req, res) => {
 
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
-    Patient.findOne({nric: req.body.patient}, (err, patient) => {
+    console.log(req.body);
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
             console.log("failed " + err)
             return res.json({success: false, msg: err});
         }
         if(patient){
-            return res.json({success: true, msg: "Patient successfully registered"});
+            return res.json({success: true, msg: "Patient already registered"});
 
         } else {
-            return res.json({success: false, msg: "Patient cannot be registered "});
+            let newPatient = new Patient(req.body);
+            Patient.addWalkInPatient(newPatient, (err1, createdPatient) => {
+                if(err1)
+                    return res.json({success: false, msg: err1});
+                if(createdPatient){
+                    return res.json({success: true, msg: "Patient successfully registered"});
+                } else {
+                    return res.json({success: false, msg: "Patient cannot be registered"});
+                }
+
+            });
         }            
     });
 
 });
 
 
-// Update patient details <TBC>
+// Update patient details
 router.post('/updateWalkInPatientDetails', (req, res) => {
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
@@ -124,6 +135,7 @@ router.post('/updateWalkInPatientDetails', (req, res) => {
                         patient.dob = req.body.dob;
                         patient.nationality = req.body.nationality;
                         patient.contactNo = req.body.contactNo;
+                        patient.email = req.body.email;
                         patient.save();
                         return res.json({success: true, msg: "Patient details have been updated"});
                     } else 
@@ -138,30 +150,37 @@ router.post('/updateWalkInPatientDetails', (req, res) => {
 });
 
 
-// Add patient to queue
+// Add patient to queue <TBC>
 router.post('/addPatientToQueue', (req, res) => {
+    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
-            res.json({success: false, msg:'Patient cannot be found'});
+            return res.json({success: false, msg:'Error'});
         }
         if(patient){
-            let newQueueList = new QueueList({
-                clinic: clinic._id
-            });
-            Queue.find({"clinic": req.body.clinic}).exec(function(err, queueList) {
-                if(err)
-                    return res.json({success: false, msg: err}).status(404);
+            Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
+                if(err2)
+                    return res.json({success: false, msg: err2}).status(404);
                 if(queueList) {
-                    queueList.patients.push(req.user._id);
-                    queueList.save(function(err2, queueListSaved) {
-                        if(err2){
-                            return res.json({success: false, msg: err2}).status(404);
+                    console.log(queueList);
+                    Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
+                        if(err3)
+                            return res.json({success: false, msg: err3}).status(404);
+                        if(patientExistInQueue){
+                            return res.json({success: false, msg: "Patient already in queue"}).status(404);
                         } else {
-                            if(queueListSaved){
-                                return res.json({succes: true, msg: 'Patient has successfully been added to queue'});
-                            } else {
-                                return res.json({succes: false, msg: 'Patient cannot be added to queue'});
-                            }
+                            queueList.patients.push(patient._id);
+                            queueList.save(function(err2, queueListSaved) {
+                                if(err2){
+                                    return res.json({success: false, msg: err2}).status(404);
+                                } else {
+                                    if(queueListSaved){
+                                        return res.json({success: true, msg: 'Patient has successfully been added to queue'});
+                                    } else {
+                                        return res.json({success: false, msg: 'Patient cannot be added to queue'});
+                                    }
+                                }
+                            });
                         }
                     });
                    
