@@ -80,9 +80,12 @@ export class PatientService {
 
     //Get Patient's Appointment
     getBookedClinics(){
-        return this.http.get('http://localhost:4000/patient/getBookedClinic', {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
-        })});
+        return this.http.get('http://localhost:4000/patient/getBookedClinic');
     }
+
+    //Cancel Booking
+    // cancelBookings(clinic){
+    //     return this.http.post('http:localhost:4000/patient/cancelBooking', clinic)
+    // }
 
 }

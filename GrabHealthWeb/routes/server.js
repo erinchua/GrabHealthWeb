@@ -5,6 +5,8 @@ const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
 const WalkInPatient = require("../models/walkinpatient");
+const Appointment = require("../models/appointment");
+const database = require("../config/database");
 
 
 /*const Nexmo = require('nexmo');

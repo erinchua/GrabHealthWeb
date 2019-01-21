@@ -4,16 +4,21 @@ const Schema = mongoose.Schema;
 const AppointmentSchema = mongoose.Schema({
     clinic: {
         type: Schema.Types.ObjectId,
-        ref: 'Clinic',
-        required: true,
+        ref: 'Clinic'
     },
-    patients: [{
+    patient: {
         type: Schema.Types.ObjectId,
         ref: 'Patient'
-    }],
+    },
+    clinicName: {
+        type: Schema.Types.Mixed,
+        ref: 'Clinic'
+    },
     status: {
-        type: String
-    } 
+        type: String,
+        required: true,
+        default: 'pending'
+    }
 });
 
 const Appointment = module.exports = mongoose.model('Appointment', AppointmentSchema);

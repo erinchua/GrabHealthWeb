@@ -6,7 +6,7 @@ const PendingList = require('../models/pendinglist');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
-const Queue = require('../models/queue');
+const Appointment = require('../models/appointment');
 
 
 //Register
@@ -139,7 +139,29 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                                 return res.json({success: false, msg: "Patient already exists in pendingList"});
                             } 
                             else {
-                                return res.json({success: true, msg: "Successfully booked!"});
+                                if(checking2){
+                                    let newAppointment = new Appointment({
+                                        patient: req.user._id,
+                                        clinic: req.body._id,
+                                        clinicName: req.body
+                                    });
+                                    Appointment.addAppointment(newAppointment, (err, appointment) => {
+                                        if (err) {
+                                            return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                        } else {
+                                            if (appointment){
+                                                Appointment.find({})
+                                                .populate('clinicName', '_id: 0, name')
+                                                .exec(function (err, appointments){
+                                                    return res.json({success: true, msg: "Successfully booked"});
+                                                }) 
+                                            } else {
+                                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                            }
+                                        }
+                                    });
+                                }
+                                //return res.json({success: true, msg: "Successfully booked!"});
                             }
                         });
                     } else {
@@ -167,17 +189,11 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 });
 
 //Get Patient's Booked Clinic
-router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
-
-    Queue.find({patients: req.user._id}, (err, patientList) => {
-        if (err){
-            res.json({success: false, msg: "Error getting status"});
-        } else {
-            if (patientList){
-                console.log(patientList)
-            }
-        }
-    });
+router.get('/getBookedClinic', (req, res) => {
+    Appointment.find({})
+        .exec(function (err, appointments){
+            res.send({'appointments': appointments}).status(201);
+        });
 });
 
 module.exports = router;
