@@ -24,6 +24,7 @@ nexmo.message.sendSms(
     }
 );*/
 
+//Admin
 router.post('/createClinic', (req, res) => {
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
@@ -83,11 +84,19 @@ router.post('/removeClinic', (req, res) => {
     });
 });
 
+router.post('/getAllPatients', (req, res) => {
+    Patient.find({}, (err, patients) =>{
+        if(err)
+            return res.json({success: false, msg: 'Error has occurred'});
+        return res.json({success: true, patients: patients })
+    })
+});
 
+//Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
     console.log(req.body);
-    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+    Patient.findOne({nric: req.body.nric}, '-password' ,(err, patient) => {
         if(err){
             console.log("failed " + err)
             return res.json({success: false, msg: err});
