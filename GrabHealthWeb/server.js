@@ -130,16 +130,6 @@ app.use('/', router);
 //Serve static files
 app.use('/GrabHealth/', express.static(path.join(__dirname, 'public')))
 
-//Index Route
-app.get('/', (req, res) => {
-    res.send('Invalid endpoint');
-})
-
-app.get('*', function (req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
-
-
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
