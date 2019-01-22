@@ -160,7 +160,6 @@ router.post('/addPatientToQueue', (req, res) => {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
                 if(queueList) {
-                    console.log(queueList);
                     Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
                         if(err3)
                             return res.json({success: false, msg: err3}).status(404);
@@ -188,6 +187,18 @@ router.post('/addPatientToQueue', (req, res) => {
         }
     })
 }); 
+
+
+router.post('/pendingList', (req, res) => {
+    console.log(req.body);
+    PendingList.findOne({ clinic: req.body.clinic })
+    .populate({ path: 'patients', select: 'firstName lastName nric contactNo gender dob address nationality email' })
+    .exec(function (err, pendingList){
+        if(err)
+            return res.json({success: false, msg: err});
+        return res.json({success: true,'pendingList': pendingList}).status(201);
+    }) 
+});
 
 
 
