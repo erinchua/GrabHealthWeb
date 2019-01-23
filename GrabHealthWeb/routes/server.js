@@ -216,6 +216,7 @@ router.post('/queueList', (req, res) => {
 });
 
 
+// Remove patient from queue
 router.post('/removePatientFromQueue', (req, res) => {
     console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
@@ -252,6 +253,50 @@ router.post('/pendingList', (req, res) => {
 });
 
 
+// Accept appointment request
+router.post('/acceptAppointmentRequest', (req, res) => {
+    console.log(req.body);
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err){
+            return res.json({success: false, msg:'Error'});
+        }
+        if(patient){
+            Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
+                if(err2)
+                    return res.json({success: false, msg: err2}).status(404);
+                if(queueList) {
+                    Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
+                        if(err3)
+                            return res.json({success: false, msg: err3}).status(404);
+                        if(patientExistInQueue){
+                            return res.json({success: false, msg: "Patient already in queue"}).status(404);
+                        } else {
+                            queueList.patients.push(patient._id);
+                            var queueNo = queueList.queueNo + 1;
+                            queueList.queueNo = queueNo;
+                            console.log(queueList.queueNo);
+                            queueList.save(function(err2, queueListSaved) {
+                                if(err2){
+                                    return res.json({success: false, msg: err2}).status(404);
+                                } else {
+                                    if(queueListSaved){
+                                        patient.queueNo = queueNo;
+                                        patient.save();
+                                        return res.json({success: true, msg: 'Patient has successfully been added to queue'});
+                                    } else {
+                                        return res.json({success: false, msg: 'Patient cannot be added to queue'});
+                                    }
+                                }
+                            });
+                        }
+                    });
+                   
+                }
+                
+            })
+        }
+    })
+}); 
 
 
 
