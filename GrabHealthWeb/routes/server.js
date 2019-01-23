@@ -26,6 +26,7 @@ nexmo.message.sendSms(
     }
 );*/
 
+//Admin
 router.post('/createClinic', (req, res) => {
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
@@ -85,11 +86,19 @@ router.post('/removeClinic', (req, res) => {
     });
 });
 
+router.post('/getAllPatients', (req, res) => {
+    Patient.find({}, (err, patients) =>{
+        if(err)
+            return res.json({success: false, msg: 'Error has occurred'});
+        return res.json({success: true, patients: patients })
+    })
+});
 
+//Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
     console.log(req.body);
-    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+    Patient.findOne({nric: req.body.nric}, '-password' ,(err, patient) => {
         if(err){
             console.log("failed " + err)
             return res.json({success: false, msg: err});
@@ -150,7 +159,7 @@ router.post('/updateWalkInPatientDetails', (req, res) => {
 });
 
 
-// Add patient to queue <TBC>
+// Add patient to queue
 router.post('/addPatientToQueue', (req, res) => {
     console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
@@ -162,7 +171,6 @@ router.post('/addPatientToQueue', (req, res) => {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
                 if(queueList) {
-                    console.log(queueList);
                     Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
                         if(err3)
                             return res.json({success: false, msg: err3}).status(404);
@@ -170,11 +178,16 @@ router.post('/addPatientToQueue', (req, res) => {
                             return res.json({success: false, msg: "Patient already in queue"}).status(404);
                         } else {
                             queueList.patients.push(patient._id);
+                            var queueNo = queueList.queueNo + 1;
+                            queueList.queueNo = queueNo;
+                            console.log(queueList.queueNo);
                             queueList.save(function(err2, queueListSaved) {
                                 if(err2){
                                     return res.json({success: false, msg: err2}).status(404);
                                 } else {
                                     if(queueListSaved){
+                                        patient.queueNo = queueNo;
+                                        patient.save();
                                         return res.json({success: true, msg: 'Patient has successfully been added to queue'});
                                     } else {
                                         return res.json({success: false, msg: 'Patient cannot be added to queue'});
@@ -190,6 +203,58 @@ router.post('/addPatientToQueue', (req, res) => {
         }
     })
 }); 
+
+
+// Get queue list details
+router.post('/queueList', (req, res) => {
+    console.log(req.body);
+    Queue.findOne({ clinic: req.body.clinic })
+    .populate({ path: 'patients', select: '-password' })
+    .exec(function (err, queue){
+        if(err)
+            return res.json({success: false, msg: err});
+        return res.json({success: true,'queueList': queue}).status(201);
+    }) 
+});
+
+
+router.post('/removePatientFromQueue', (req, res) => {
+    console.log(req.body);
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err){
+            return res.json({success: false, msg: err});
+        } else {
+            if(patient){
+                Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
+                    if(err2)
+                        return res.json({success: false, msg: err2}).status(404);
+                    if(queueList) {
+                        queueList.patients.remove(patient);
+                        queueList.save();
+                        return res.json({success: true, msg: "Patient is removed from queue"});        
+                    }
+                });
+            } else 
+                return res.json({success: false, msg: "Patient cannot be removed from queue"});        
+        }
+    });
+});
+
+
+// Get pending list details
+router.post('/pendingList', (req, res) => {
+    console.log(req.body);
+    PendingList.findOne({ clinic: req.body.clinic })
+    .populate({ path: 'patients', select: '-password' })
+    .exec(function (err, pendingList){
+        if(err)
+            return res.json({success: false, msg: err});
+        return res.json({success: true,'pendingList': pendingList}).status(201);
+    }) 
+});
+
+
+
 
 
 

@@ -56,10 +56,10 @@ let PatientSchema = new Schema({
         required: true,
         default: "Non-Applicable"
     },
-    email: {
-        type: String,
+    queueNo: {
+        type: Number,
         required: true,
-        unique: true
+        default: 1
     },
     clinics: [{
         type: Schema.Types.ObjectId,
