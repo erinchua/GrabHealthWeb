@@ -55,6 +55,11 @@ let PatientSchema = new Schema({
         required: true,
         default: "Non-Applicable"
     },
+    queueNo: {
+        type: Number,
+        required: true,
+        default: 1
+    },
     clinics: [{
         type: Schema.Types.ObjectId,
         ref: 'Clinic'
