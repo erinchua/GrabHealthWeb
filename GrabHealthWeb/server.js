@@ -128,7 +128,11 @@ router.route('/issues/delete/:id').get((req, res) => {
 app.use('/', router);
 
 //Serve static files
-app.use('/GrabHealth', express.static(path.join(__dirname, 'public')))
+app.use('/GrabHealth/', express.static(path.join(__dirname, 'public')));
+
+app.get('/GrabHealth/*', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
 
 //External Server
 app.use('/GrabHealthWeb', ExtServer);

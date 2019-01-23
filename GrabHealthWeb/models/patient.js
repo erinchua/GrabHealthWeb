@@ -55,11 +55,6 @@ let PatientSchema = new Schema({
         required: true,
         default: "Non-Applicable"
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
     clinics: [{
         type: Schema.Types.ObjectId,
         ref: 'Clinic'

@@ -24,6 +24,7 @@ nexmo.message.sendSms(
     }
 );*/
 
+//Admin
 router.post('/createClinic', (req, res) => {
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
@@ -83,11 +84,19 @@ router.post('/removeClinic', (req, res) => {
     });
 });
 
+router.post('/getAllPatients', (req, res) => {
+    Patient.find({}, (err, patients) =>{
+        if(err)
+            return res.json({success: false, msg: 'Error has occurred'});
+        return res.json({success: true, patients: patients })
+    })
+});
 
+//Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
     console.log(req.body);
-    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+    Patient.findOne({nric: req.body.nric}, '-password' ,(err, patient) => {
         if(err){
             console.log("failed " + err)
             return res.json({success: false, msg: err});
@@ -160,7 +169,6 @@ router.post('/addPatientToQueue', (req, res) => {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
                 if(queueList) {
-                    console.log(queueList);
                     Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
                         if(err3)
                             return res.json({success: false, msg: err3}).status(404);
@@ -188,6 +196,18 @@ router.post('/addPatientToQueue', (req, res) => {
         }
     })
 }); 
+
+
+router.post('/pendingList', (req, res) => {
+    console.log(req.body);
+    PendingList.findOne({ clinic: req.body.clinic })
+    .populate({ path: 'patients', select: 'firstName lastName nric contactNo gender dob address nationality email' })
+    .exec(function (err, pendingList){
+        if(err)
+            return res.json({success: false, msg: err});
+        return res.json({success: true,'pendingList': pendingList}).status(201);
+    }) 
+});
 
 
 
