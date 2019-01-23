@@ -42,8 +42,9 @@ let PatientSchema = new Schema({
         type: String,
         required: true
     },
-    attach: {
-        type: String
+    file: {
+        data: Buffer,
+        contentType: String
     },
     email: {
         type: String,

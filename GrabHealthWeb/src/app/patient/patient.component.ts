@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators, FormArray } from '@angular/forms'; 
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; 
 import { CustomValidators } from '../custom-validators';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 @Component({
   selector: 'app-patient',
   templateUrl: './patient.component.html',
@@ -19,7 +21,7 @@ export class PatientComponent implements OnInit {
     address: new FormControl('address'),
     postalCode: new FormControl('postalCode'),
     nationality: new FormControl('nationality'),
-    attach: new FormControl('attach'),
+    file: new FormControl('file'),
     email: new FormControl('email'),
     password: new FormControl('password'),
   });
@@ -27,7 +29,7 @@ export class PatientComponent implements OnInit {
   submitted = false;
   success = false;
 
-  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router) { 
+  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router, private http: HttpClient) { 
     this.registrationForm = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -38,7 +40,7 @@ export class PatientComponent implements OnInit {
       postalCode: ['', Validators.required],
       nationality: ['', Validators.required],
       contactNo: ['', Validators.required],
-      attach: ['', Validators.required],
+      file: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.compose([Validators.required, 
                                       CustomValidators.patternValidator(/\d/, { hasNumber: true }),
@@ -74,5 +76,6 @@ export class PatientComponent implements OnInit {
 
   ngOnInit() {
   }
+
 
 }

@@ -22,7 +22,7 @@ router.post('/register', (req, res, next) => {
         address: req.body.address,
         postalCode: req.body.postalCode,
         nationality: req.body.nationality,
-        attach: req.body.attach,
+        file: req.body.file,
         email: req.body.email,
         password: req.body.password
     });
@@ -71,7 +71,7 @@ router.post('/authenticate', (req, res, next) => {
                         address: patient.address,
                         postalCode: patient.postalCode,
                         nationality: patient.nationality,
-                        attach: patient.attach,
+                        file: patient.file,
                         email: patient.email
                     },
                     msg: "Successful Login"
@@ -108,13 +108,11 @@ router.get('/getClinic', (req, res) => {
 
 //Book Clinic
 router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
-    //console.log(req.user._id);
     PendingList.findOne({clinic: req.body._id}, (err, pendingList) => {
         if (err){
             return res.json({success: false, msg: "Error"});
         } else {
             if(pendingList){
-                //console.log(pendingList); //this gives all the data in database
                 PendingList.findOne({patients: {$all: [req.user._id]}}, (err, foundPatient) => {
                     if(err)
                         console.log(err)
@@ -161,7 +159,6 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                                         }
                                     });
                                 }
-                                //return res.json({success: true, msg: "Successfully booked!"});
                             }
                         });
                     } else {
@@ -194,6 +191,32 @@ router.get('/getBookedClinic', (req, res) => {
         .exec(function (err, appointments){
             res.send({'appointments': appointments}).status(201);
         });
+});
+
+//Cancel Patient's Booking
+router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Appointment.findOne({patient: req.user._id}, (err, appointment) => {
+        if (err) {
+            console.log("Appointment Error");
+            res.json({success: false, msg: "Appointment doesn't exist"});
+        }
+        if (appointment) {
+            appointment.remove(function(err, appointmentRemoved){
+                if (err){
+                    res.json({success: false, msg: "Appointment doesn't exist"});
+                }
+                if (appointmentRemoved){
+                    PendingList.updateOne({patients: {$all: [req.user._id]}}, {$pull: {patients :{$in: [req.user._id]}}}, (err, pendingListRemoved) => {
+                        if (err) {
+                            res.json({success: false, msg: "Appointment doesn't exist"});
+                        } else {
+                            res.json({success: true, msg: "Appointment is cancalled"});
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router'; 
 import { PatientService } from '../services/patient.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 @Component({
   selector: 'app-booking-status',
@@ -9,7 +10,7 @@ import { PatientService } from '../services/patient.service';
 })
 export class BookingStatusComponent implements OnInit {
 
-  constructor(private router : Router, private patientService : PatientService) { }
+  constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
 
   appointments:Array<any>;
 
@@ -28,7 +29,20 @@ export class BookingStatusComponent implements OnInit {
   } 
 
   onCancel(){
+    var flashMessagesService = this.flashMessagesService;
     
+    this.patientService.cancelBookings(this.appointments).subscribe(
+      res => {
+        console.log(res);
+        if (res['success']){
+          flashMessagesService.show('Appointment has been successfully cancelled!', { cssClass: 'alert-success', timeout: 3000});
+        } else {
+          flashMessagesService.show('Sorry cancellation failed!', { cssClass: 'alert-danger', timeout: 3000 });
+        }
+      }, 
+      err => {
+        console.log(err);
+      });
   }
 
 }

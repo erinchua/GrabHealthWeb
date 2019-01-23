@@ -72,6 +72,7 @@ export class PatientService {
         })});
     }
 
+    //Edit Patient's Profile
     editPatientDetails(patient){
         return this.http.post(this.url + '/patient/editPatientDetail', patient, {headers : new HttpHeaders({
             'Authorization': localStorage.getItem("id_token")
@@ -85,9 +86,11 @@ export class PatientService {
         })});
     }
 
-    //Cancel Booking
-    // cancelBookings(clinic){
-    //     return this.http.post('http:localhost:4000/patient/cancelBooking', clinic)
-    // }
+    //Cancel Patient's Booking
+    cancelBookings(clinic){
+        return this.http.post(this.url + '/patient/cancelBooking', clinic, {headers: new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })});    
+    }
 
 }

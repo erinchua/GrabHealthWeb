@@ -133,7 +133,7 @@ app.use('/GrabHealth', express.static(path.join(__dirname, 'public')))
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
-port = process.env.PORT || 4000
+var port = process.env.PORT || 4000;
 
 if (process.env.HTTPS) {
     https.createServer({
