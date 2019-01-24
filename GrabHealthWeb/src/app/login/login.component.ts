@@ -64,15 +64,14 @@ export class LoginComponent implements OnInit {
 
   onloadCallback = function(){
       grecaptcha.render('recaptcha', {
-        'sitekey': '6Ld1WYwUAAAAACPeGjQLNDvfxo0dUHjNx3GMBn4T',
-        'callback': this.verifyCallback,
+        'sitekey': '6Ld1WYwUAAAAACPeGjQLNDvfxo0dUHjNx3GMBn4T' 
       });
     
   }
 
-  verifyCallback(response){
-    alert(response);
-  }
+  // verifyCallback(response){
+  //   alert(response);
+  // }
 
 
 }
