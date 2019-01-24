@@ -8,8 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
   <app-root></app-root>
+  <script>
+    function YourSubmitFn(token){
+      console.log('https://www.google.com/recaptcha/api/siteverify?secret=6Ld1WYwUAAAAAOe921Pih1D4_It-54M6pxnS6djT&response='+token);
+      $('#submitBtn').removeAttr('disabled');
+    }
+  </script>
 </body>
 </html>

@@ -20,6 +20,10 @@
                             </div>
                     </div>
 
+                    <div>
+                        <re-captcha class="g-recaptcha" id="recaptcha" data-sitekey="6Ld1WYwUAAAAACPeGjQLNDvfxo0dUHjNx3GMBn4T" data-callback="YourSubmitFn" formControlName="recaptcha"></re-captcha>
+                    </div>
+
                     <div class="form-group text-right">
                         <a href="#" data-toggle="modal" data-target="#modal">Forget Password</a>
 
@@ -52,7 +56,7 @@
                     
 
                     <div class="form-group float-right">
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <button class="btn btn-primary" type="submit" id="submitBtn" disabled>Submit</button>
                     </div>
                 </div>
             </div>

@@ -39,7 +39,6 @@ router.post('/register', (req, res, next) => {
         } else {
             if (patient){
                 axios.post(webserverurl + '/patient/addPatient', {
-                    _id: patient._id,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     nric: req.body.nric,    
