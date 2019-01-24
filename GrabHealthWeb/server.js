@@ -20,12 +20,13 @@ const internalServer = express();
 const appPort = 60003;
 internalServer.use(helmet());
 internalServer.use(cors());
-internalServer.use('/GrabHealthWeb', ExtServer);
 //Body Parser MiddeWare
 //Parse application/json
 internalServer.use(bodyParser.json());
 internalServer.use(bodyParser.urlencoded({extended: true}));
 internalServer.use(bodyCleaner)
+
+internalServer.use('/GrabHealthWeb', ExtServer);
 
 const app = express();
 

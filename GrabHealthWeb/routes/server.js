@@ -28,6 +28,7 @@ nexmo.message.sendSms(
 
 //Admin
 router.post('/createClinic', (req, res) => {
+    console.log(req.body);
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
         if(err){
