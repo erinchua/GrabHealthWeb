@@ -7,7 +7,13 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Appointment = require('../models/appointment');
+const axios = require('axios');
 
+if(process.env.WEBSERVERURL){
+    var webserverurl = process.env.WEBSERVERURL;
+} else {
+    var webserverurl =  'http://localhost:4560';
+}
 
 //Register
 router.post('/register', (req, res, next) => {
@@ -20,7 +26,6 @@ router.post('/register', (req, res, next) => {
         gender: req.body.gender,
         dob: req.body.dob,
         address: req.body.address,
-        postalCode: req.body.postalCode,
         nationality: req.body.nationality,
         file: req.body.file,
         email: req.body.email,
@@ -32,7 +37,34 @@ router.post('/register', (req, res, next) => {
             console.log(err);
             res.json({success: false, msg: "Failed to register user"});
         } else {
-            res.json({success: true, msg: "Patient successfully registered"});
+            if (patient){
+                axios.post(webserverurl + '/patient/addPatient', {
+                    _id: patient._id,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    nric: req.body.nric,    
+                    contactNo: req.body.contactNo,
+                    gender: req.body.gender,
+                    dob: req.body.dob,
+                    address: req.body.address,
+                    nationality: req.body.nationality,
+                    email: req.body.email
+                })
+                .then((res) => {
+                    data = res['data'];
+                    if(data['success']){
+                        console.log("Successful");
+                    } else {
+                        console.log("Failed");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+                res.json({success: true, msg: "Patient successfully registered"});
+            } else {
+                res.json({success: false, msg: "Failed to register user"});
+            }
         }
     });
 });
@@ -69,7 +101,6 @@ router.post('/authenticate', (req, res, next) => {
                         gender: patient.gender,
                         dob: patient.dob,
                         address: patient.address,
-                        postalCode: patient.postalCode,
                         nationality: patient.nationality,
                         file: patient.file,
                         email: patient.email
