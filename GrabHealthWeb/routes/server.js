@@ -4,6 +4,9 @@ const Clinic = require("../models/clinic");
 const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
+const WalkInPatient = require("../models/walkinpatient");
+const Appointment = require("../models/appointment");
+const database = require("../config/database");
 
 
 /*const Nexmo = require('nexmo');
@@ -204,7 +207,6 @@ router.post('/addPatientToQueue', (req, res) => {
 
 // Get queue list details
 router.post('/queueList', (req, res) => {
-    console.log(req.body);
     Queue.findOne({ clinic: req.body.clinic })
     .populate({ path: 'patients', select: '-password' })
     .exec(function (err, queue){

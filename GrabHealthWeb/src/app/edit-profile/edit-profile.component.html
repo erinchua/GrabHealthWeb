@@ -6,7 +6,7 @@
 
   <div class="container float-right" id="rightSide">
     <div class="container col-sm-2 float-left text-center" id="rightInner">
-        <img src="{{patient.attach}}" width="150px"/>
+        <img src="{{patient.file}}" width="150px"/>
         <label>Email:</label>
         <input type="text" class="text-line text-center" [(ngModel)]="patient.email"  value="{{patient.email}}" disabled>
         <br>
@@ -41,9 +41,6 @@
       <br>
       <label>Address:</label>
       <input type="text" class="form-control text-line text-center" [(ngModel)]="patient.address" value="{{patient.address}}">
-      <br>
-      <label>Postal Code:</label>
-      <input type="text" class="form-control text-line text-center" [(ngModel)]="patient.postalCode" value="{{patient.postalCode}}">
 
       <button type="button" class="btn btn-primary float-right" id="save" (click)="onSaved()">Save</button>
     </div>
