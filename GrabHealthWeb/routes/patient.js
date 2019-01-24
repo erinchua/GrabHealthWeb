@@ -207,7 +207,7 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
 
 //Edit Patient Details
 router.post('/editPatientDetail', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password, contactNo: req.body.contactNo, address: req.body.address, postalCode: req.body.postalCode}, {upsert:true}, (err, patient) => {
+    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password, contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
         if (err) {
             res.json({success: false, msg: "Error"});
         } else {
