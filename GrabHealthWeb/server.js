@@ -137,7 +137,7 @@ app.get('/GrabHealth/*', function (req, res) {
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
 
-port = process.env.PORT || 4000
+var port = process.env.PORT || 4000;
 
 if (process.env.HTTPS) {
     https.createServer({

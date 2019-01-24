@@ -33,17 +33,13 @@ let PatientSchema = new Schema({
         type: String,
         required: true
     },
-    postalCode: {
-        type: Number,
-        required: true,
-        default: 1000000000
-    },
     nationality: {
         type: String,
         required: true
     },
-    attach: {
-        type: String
+    file: {
+        data: Buffer,
+        contentType: String
     },
     email: {
         type: String,

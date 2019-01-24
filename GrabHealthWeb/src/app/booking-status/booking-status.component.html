@@ -19,11 +19,11 @@
           <th scope="col">Remarks</th>
         </tr>
       </thead>
-      <tbody *ngFor="let clinic of clinics">
+      <tbody *ngFor="let appointment of appointments">
         <tr>
-          <td></td>
-          <td>{{ clinic.name }}</td>
-          <td></td>
+          <td>0001</td>
+          <td>{{ appointment.clinicName.name }}</td>
+          <td>{{ appointment.status }}</td>
           <td><button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#cancelModal"><i class="fa fa-times-circle"></i> Cancel</button></td>
         </tr>
       </tbody>
@@ -60,7 +60,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-primary" data-dismiss="modal">No</button>
-          <button type="button" class="btn btn-outline-primary">Yes</button>
+          <button type="button" class="btn btn-outline-primary" (click)="onCancel()" data-dismiss="modal">Yes</button>
         </div>
       </div>
     </div>
