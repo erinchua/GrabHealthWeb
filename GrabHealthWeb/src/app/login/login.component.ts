@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PatientService } from '../services/patient.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: FormGroup;
+  loginForm = new FormGroup({
+    email: new FormControl('email'),
+    password: new FormControl('password')
+  });
+  
   submitted = false;
   success = false;
 
@@ -22,7 +26,6 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
-
     this.submitted = true;
 
     if (this.loginForm.invalid){
@@ -43,8 +46,33 @@ export class LoginComponent implements OnInit {
     )
 
     this.success = true;
+
   }
 
   ngOnInit() {
+    this.scriptAdd();
+    window['onloadCallback'] = this.onloadCallback.bind(this);
   }
+
+  scriptAdd(){
+    let script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+
+  onloadCallback = function(){
+      grecaptcha.render('recaptcha', {
+        'sitekey': '6Ld1WYwUAAAAACPeGjQLNDvfxo0dUHjNx3GMBn4T',
+        'callback': this.verifyCallback,
+      });
+    
+  }
+
+  verifyCallback(response){
+    alert(response);
+  }
+
+
 }
