@@ -28,10 +28,6 @@ const ClinicSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true
-    },
-    clinicPhoto: {
-        type: String,
-        required: true
     }
 });
 
