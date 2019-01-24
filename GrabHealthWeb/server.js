@@ -26,7 +26,7 @@ internalServer.use(bodyParser.json());
 internalServer.use(bodyParser.urlencoded({extended: true}));
 internalServer.use(bodyCleaner)
 
-internalServer.use('/GrabHealthWeb', ExtServer);
+// internalServer.use('/GrabHealthWeb', ExtServer);
 
 const app = express();
 
