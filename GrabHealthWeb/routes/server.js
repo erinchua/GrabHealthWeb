@@ -207,7 +207,6 @@ router.post('/addPatientToQueue', (req, res) => {
 
 // Get queue list details
 router.post('/queueList', (req, res) => {
-    console.log(req.body);
     Queue.findOne({ clinic: req.body.clinic })
     .populate({ path: 'patients', select: '-password' })
     .exec(function (err, queue){
