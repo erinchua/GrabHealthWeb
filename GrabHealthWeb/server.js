@@ -11,12 +11,24 @@ const patient = require('./routes/patient');
 const config = require('./config/database');
 const passport = require('passport');
 const env_config = require('dotenv').config();
+const bodyCleaner = require('express-body-cleaner');
 var fs = require('fs');
 var https = require('https');
 var rp = require('request-promise');
 
 // const Nexmo = require('nexmo');
 // const socketio = require('socket.io');
+const internalServer = express();
+const appPort = 60003;
+internalServer.use(helmet());
+internalServer.use(cors());
+//Body Parser MiddeWare
+//Parse application/json
+internalServer.use(bodyParser.json());
+internalServer.use(bodyParser.urlencoded({extended: true}));
+internalServer.use(bodyCleaner)
+
+internalServer.use('/GrabHealthWeb', ExtServer);
 
 const app = express();
 
@@ -169,3 +181,4 @@ if (process.env.HTTPS) {
 else {
     app.listen(port, () => console.log('Express server running on port ' + port));
 }
+internalServer.listen(appPort, () => console.log('Internal Express server running on port ' + appPort))

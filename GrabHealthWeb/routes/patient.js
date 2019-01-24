@@ -9,8 +9,8 @@ const config = require('../config/database');
 const Appointment = require('../models/appointment');
 const axios = require('axios');
 
-if(process.env.WEBSERVERURL){
-    var webserverurl = process.env.WEBSERVERURL;
+if(process.env.CLINICSERVERURL){
+    var webserverurl = process.env.CLINICSERVERURL;
 } else {
     var webserverurl =  'http://localhost:4560';
 }
