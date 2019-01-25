@@ -18,6 +18,14 @@ const AppointmentSchema = mongoose.Schema({
         type: String,
         required: true,
         default: 'pending'
+    },
+    date: {
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
+    },
+    billedAmount: {
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
     }
 });
 

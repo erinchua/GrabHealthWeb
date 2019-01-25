@@ -332,6 +332,17 @@ router.post('/rejectAppointmentRequest', (req, res) => {
     });
 });
 
+//get current patient
+router.get("/current-patient", (req, res) => {
+    Queue.findOne({ "clinic": req.body.clinic, "patients": { $all: [patient._id] }}).exec(function (err, patients) {
+        if (err)
+            res.send({ success: false, msg: err }).status(404);
+        if (patients)
+            res.send({ success: false, msg: 'patient is the current' }).status(404);
+        else
+            res.send({ success: true, 'patients': patients }).status(201);
+    });
+});
 
 // // Generate payment details
 // router.post('/getPayment', (req, res) => {

@@ -27,7 +27,6 @@ router.post('/register', (req, res, next) => {
         dob: req.body.dob,
         address: req.body.address,
         nationality: req.body.nationality,
-        file: req.body.file,
         email: req.body.email,
         password: req.body.password
     });
@@ -101,7 +100,6 @@ router.post('/authenticate', (req, res, next) => {
                         dob: patient.dob,
                         address: patient.address,
                         nationality: patient.nationality,
-                        file: patient.file,
                         email: patient.email
                     },
                     msg: "Successful Login"
