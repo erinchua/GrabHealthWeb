@@ -9,6 +9,15 @@ export class VisitHistoryComponent implements OnInit {
 
   constructor() { }
 
+  appointment: any;
+  date: '';
+  billedAmount: '';
+
+  appointments = [{
+    date: '12/01/2019',
+    billedAmount: '$30'}
+  ];
+
   ngOnInit() {
   }
 
