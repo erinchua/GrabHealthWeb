@@ -15,7 +15,7 @@ const QueueSchema = mongoose.Schema({
     patients: [{
         type: Schema.Types.ObjectId,
         ref: 'Patient'
-    }] 
+    }]
 });
 
 const Queue = module.exports = mongoose.model('Queue', QueueSchema);
