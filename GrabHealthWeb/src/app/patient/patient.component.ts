@@ -20,7 +20,6 @@ export class PatientComponent implements OnInit {
     dob: new FormControl('dob'),
     address: new FormControl('address'),
     nationality: new FormControl('nationality'),
-    file: new FormControl('file'),
     email: new FormControl('email'),
     password: new FormControl('password'),
   });
@@ -38,7 +37,6 @@ export class PatientComponent implements OnInit {
       address: ['', Validators.required],
       nationality: ['', Validators.required],
       contactNo: ['', Validators.required],
-      file: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', Validators.compose([Validators.required, 
                                       CustomValidators.patternValidator(/\d/, { hasNumber: true }),

@@ -14,7 +14,6 @@ const env_config = require('dotenv').config();
 const bodyCleaner = require('express-body-cleaner');
 var fs = require('fs');
 var https = require('https');
-var rp = require('request-promise');
 
 // const Nexmo = require('nexmo');
 // const socketio = require('socket.io');
@@ -64,24 +63,6 @@ app.use('/patient', patient);
 
 //External Server
 app.use('/GrabHealthWeb', ExtServer);
-
-// const secret = '6Ld1WYwUAAAAAOe921Pih1D4_It-54M6pxnS6djT';
-
-// app.get('/validate_captcha', (req, res) => {
-//     const options = {
-//         method: 'POST',
-//         uri: 'https://www.google.com/recaptcha/api/siteverify',
-//         qs: {
-//             secret,
-//             response: req.query.token
-//         },
-//         json : true
-//     };
-
-//     rp(options)
-//         .then(response => res.json(response))
-//         .catch(() => {});
-// });
 
 
 mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
