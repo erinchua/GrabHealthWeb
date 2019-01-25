@@ -12,7 +12,7 @@ const axios = require('axios');
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
 } else {
-    var webserverurl =  'http://localhost:60003';
+    var webserverurl =  'http://localhost:4560';
 }
 
 //Register
