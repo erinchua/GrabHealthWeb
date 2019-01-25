@@ -4,10 +4,9 @@ const Clinic = require("../models/clinic");
 const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
-const WalkInPatient = require("../models/walkinpatient");
 const Appointment = require("../models/appointment");
 const database = require("../config/database");
-
+const axios = require('axios');
 
 /*const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
@@ -95,7 +94,8 @@ router.post('/getAllPatients', (req, res) => {
     })
 });
 
-//Receptionist
+
+// Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
     console.log(req.body);
@@ -106,7 +106,6 @@ router.post('/registerWalkInPatient', (req, res) => {
         }
         if(patient){
             return res.json({success: true, msg: "Patient already registered"});
-
         } else {
             let newPatient = new Patient(req.body);
             Patient.addWalkInPatient(newPatient, (err1, createdPatient) => {
@@ -168,6 +167,7 @@ router.post('/addPatientToQueue', (req, res) => {
             return res.json({success: false, msg:'Error'});
         }
         if(patient){
+            console.log(patient);
             Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
@@ -263,45 +263,74 @@ router.post('/acceptAppointmentRequest', (req, res) => {
             return res.json({success: false, msg:'Error'});
         }
         if(patient){
-            Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
+            PendingList.findOne({"clinic": req.body.clinic}).exec(function(err2, pendingList) {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
-                if(queueList) {
-                    Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExistInQueue) =>{
+                if(pendingList) {
+                    Queue.findOne({"clinic": req.body.clinic, "patients": {$all: [patient._id]}}, (err3, patientExist) =>{
                         if(err3)
                             return res.json({success: false, msg: err3}).status(404);
-                        if(patientExistInQueue){
+                        if(patientExist){
                             return res.json({success: false, msg: "Patient already in queue"}).status(404);
                         } else {
-                            queueList.patients.push(patient._id);
-                            var queueNo = queueList.queueNo + 1;
-                            queueList.queueNo = queueNo;
-                            console.log(queueList.queueNo);
-                            queueList.save(function(err2, queueListSaved) {
-                                if(err2){
-                                    return res.json({success: false, msg: err2}).status(404);
-                                } else {
-                                    if(queueListSaved){
-                                        patient.queueNo = queueNo;
-                                        patient.save();
-                                        return res.json({success: true, msg: 'Patient has successfully been added to queue'});
-                                    } else {
-                                        return res.json({success: false, msg: 'Patient cannot be added to queue'});
-                                    }
+                            Queue.findOne({"clinic": req.body.clinic}, (err4, queueList) =>{
+                                if(queueList){
+                                    queueList.patients.push(patient._id);
+                                    var queueNo = queueList.queueNo + 1;
+                                    queueList.queueNo = queueNo;
+                                    console.log(queueList.queueNo);
+                                    queueList.save(function(err2, queueListSaved) {
+                                        if(err2){
+                                            return res.json({success: false, msg: err2}).status(404);
+                                        } else {
+                                            if(queueListSaved){
+                                                pendingList.patients.remove(patient._id);
+                                                pendingList.save();
+                                                patient.queueNo = queueNo;
+                                                patient.save();
+                                                return res.json({success: true, msg: 'Patient has successfully been added to queue'});
+                                            } else {
+                                                return res.json({success: false, msg: 'Patient cannot be added to queue'});
+                                            }
+                                        }
+                                    });
                                 }
                             });
+            
                         }
                     });
                    
                 }
                 
-            })
+            })            
+                
         }
     })
 }); 
 
 
-
+// Reject appointment request
+router.post('/rejectAppointmentRequest', (req, res) => {
+    console.log(req.body);
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err){
+            return res.json({success: false, msg: err});
+        } else {
+            if(patient){
+                PendingList.findOne({"clinic": req.body.clinic}).exec(function(err2, pendingList) {
+                    if(err2)
+                        return res.json({success: false, msg: err2}).status(404);
+                    if(pendingList) {
+                        pendingList.patients.remove(patient);
+                        pendingList.save();
+                        return res.json({success: true, msg: "Patient's appointment request is rejected"});        
+                    }
+                });
+            } else 
+                return res.json({success: false, msg: "Patient cannot be rejected"});        
+        }
+    });
+});
 
 
 module.exports = router;

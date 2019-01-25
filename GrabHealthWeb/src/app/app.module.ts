@@ -24,6 +24,9 @@ import { FormsModule } from '@angular/forms';
 import { BookingStatusComponent } from './booking-status/booking-status.component';
 import { VisitHistoryComponent } from './visit-history/visit-history.component';
 import { FlashMessagesModule } from 'angular2-flash-messages';
+import { NgxCaptchaModule } from 'ngx-captcha';
+import { RecaptchaModule } from 'ng-recaptcha';
+import { RecaptchaFormsModule } from 'ng-recaptcha/forms';
 
 export function getToken(): string {
   return localStorage.getItem('id_token');
@@ -50,6 +53,9 @@ export function getToken(): string {
     HttpClientModule,
     HttpModule,
     AngularFontAwesomeModule,
+    NgxCaptchaModule,
+    RecaptchaModule.forRoot(),
+    RecaptchaFormsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: getToken
