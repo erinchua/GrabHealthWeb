@@ -14,12 +14,14 @@
       <thead>
         <tr>
           <th scope="col">Date of Visit</th>
+          <th scope="col">Clinic Name</th>
           <th scope="col">Billed Amount</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let appointment of appointments">
           <td>{{appointment.date}}</td>
+          <td>{{appointment.clinicName}}</td>
           <td>{{appointment.billedAmount}}</td>
         </tr>
       </tbody>

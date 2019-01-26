@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Appointment = require('../models/appointment');
 const axios = require('axios');
+const Queue = require('../models/queue');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
@@ -179,13 +180,14 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                                                 Appointment.find({})
                                                 .populate('clinicName', '_id: 0, name')
                                                 .exec(function (err, appointments){
-                                                    return res.json({success: true, msg: "Successfully booked"});
-                                                }) 
+                                                    return res.json({success: true, msg: "Successfully booked"});                                                    
+                                                });
                                             } else {
                                                 return res.json({success: false, msg: "Patient already exists in pendingList"});
                                             }
                                         }
                                     });
+
                                 }
                             }
                         });
