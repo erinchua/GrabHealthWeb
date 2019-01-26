@@ -56,7 +56,7 @@ export class FindClinicComponent implements OnInit {
           flashMessagesService.show('Successfully booked!', { cssClass: 'alert-success', timeout: 3000});
           this.getClinics();
         } else {
-          flashMessagesService.show('You have already made a booking!', { cssClass: 'alert-danger', timeout: 3000 });
+          flashMessagesService.show(res['msg'], { cssClass: 'alert-danger', timeout: 3000 });
           this.getClinics();
         }
       }, 

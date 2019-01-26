@@ -3,6 +3,7 @@ const router = express.Router();
 const Patient = require('../models/patient');
 const Clinic = require('../models/clinic');
 const PendingList = require('../models/pendinglist');
+const Queue = require('../models/queue');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
@@ -145,52 +146,60 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                     if(err)
                         console.log(err)
                     if(!foundPatient){
-                        pendingList.patients.push(req.user._id);
-                        Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
-                            if(err)
-                                console.log(err);
-                            if(!patientWithClinic){
-                                Patient.findById(req.user._id,(err, patient) => {
+                        Queue.findOne({patients: {$all: [req.user._id]}}, (queueErr, foundPatientInQueue) => {
+                            if(queueErr)
+                                console.log(err)
+                            if(!foundPatientInQueue){
+                                pendingList.patients.push(req.user._id);
+                                Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
                                     if(err)
-                                        console.log(err)
-                                    if(patient){
-                                        patient.clinics.push(pendingList.clinic);
-                                        patient.save();
-                                    }
-                                })
-                            }
-                        });
-                        pendingList.save(function (e2, checking2) {
-                            if (e2) {
-                                return res.json({success: false, msg: "Patient already exists in pendingList"});
-                            } 
-                            else {
-                                if(checking2){
-                                    let newAppointment = new Appointment({
-                                        patient: req.user._id,
-                                        clinic: req.body._id,
-                                        clinicName: req.body
-                                    });
-                                    Appointment.addAppointment(newAppointment, (err, appointment) => {
-                                        if (err) {
-                                            return res.json({success: false, msg: "Patient already exists in pendingList"});
-                                        } else {
-                                            if (appointment){
-                                                Appointment.find({})
-                                                .populate('clinicName', '_id: 0, name')
-                                                .exec(function (err, appointments){
-                                                    return res.json({success: true, msg: "Successfully booked"});
-                                                }) 
-                                            } else {
-                                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                        console.log(err);
+                                    if(!patientWithClinic){
+                                        Patient.findById(req.user._id,(err, patient) => {
+                                            if(err)
+                                                console.log(err)
+                                            if(patient){
+                                                patient.clinics.push(pendingList.clinic);
+                                                patient.save();
                                             }
+                                        })
+                                    }
+                                });
+                                pendingList.save(function (e2, checking2) {
+                                    if (e2) {
+                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                    } 
+                                    else {
+                                        if(checking2){
+                                            let newAppointment = new Appointment({
+                                                patient: req.user._id,
+                                                clinic: req.body._id,
+                                                clinicName: req.body
+                                            });
+                                            Appointment.addAppointment(newAppointment, (err, appointment) => {
+                                                if (err) {
+                                                    return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                } else {
+                                                    if (appointment){
+                                                        Appointment.find({})
+                                                        .populate('clinicName', '_id: 0, name')
+                                                        .exec(function (err, appointments){
+                                                            return res.json({success: true, msg: "Successfully booked"});
+                                                        }) 
+                                                    } else {
+                                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                    }
+                                                }
+                                            });
                                         }
-                                    });
-                                }
+                                    }
+                                });
+                            } else {
+                                return res.json({success: false, msg: "You are already in a queue!"});
                             }
                         });
                     } else {
-                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                        return res.json({success: false, msg: "You have already made a booking!"});
                     }
                 });
                
