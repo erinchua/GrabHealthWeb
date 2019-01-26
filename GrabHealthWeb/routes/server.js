@@ -301,14 +301,14 @@ router.post('/acceptAppointmentRequest', (req, res) => {
                                                 pendingList.save();
                                                 patient.queueNo = queueNo;
                                                 patient.save();
-                                                Appointment.find({patient: patient._id, clinic: queueList.clinic, status: 'Pending'}, (err, appointmentFound) =>{
-                                                    if(err){
+                                                var pending = "Pending";
+                                                Appointment.findOne({patient: patient._id, clinic: queueList.clinic, status: pending}, (err, appointmentFound) =>{
+                                                    if(err)
                                                         console.log('Cannot show in appointment status');
                                                     if(appointmentFound){
                                                         appointmentFound.status = 'Accepted';
                                                         appointmentFound.save();
-                                                    }
-                                                    }
+                                                    }                                                     
                                                 })
                                                 return res.json({success: true, msg: 'Patient has successfully been added to queue'});
                                             } else {
@@ -345,14 +345,14 @@ router.post('/rejectAppointmentRequest', (req, res) => {
                     if(pendingList) {
                         pendingList.patients.remove(patient);
                         pendingList.save();
-                        Appointment.find({patient: patient._id, clinic: pendingList.clinic, status: 'Pending'}, (err, appointmentFound) =>{
-                            if(err){
+                        Appointment.findOne({patient: patient._id, clinic: pendingList.clinic, status: "Pending"}, (err, appointmentFound) =>{
+                            if(err)
                                 console.log('Cannot show in appointment status');
                             if(appointmentFound){
                                 appointmentFound.status = 'Rejected';
                                 appointmentFound.save();
                             }
-                            }
+                            
                         })
                         return res.json({success: true, msg: "Patient's appointment request is rejected"});        
                     }
