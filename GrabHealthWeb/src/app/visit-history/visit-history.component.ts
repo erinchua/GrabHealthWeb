@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { PatientService } from '../services/patient.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 @Component({
   selector: 'app-visit-history',
@@ -7,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class VisitHistoryComponent implements OnInit {
 
-  constructor() { }
+  constructor(private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
 
   appointment: any;
   date: '';
@@ -20,7 +22,21 @@ export class VisitHistoryComponent implements OnInit {
     clinicName: 'Vlad Clinic'
   }];
 
+  //appointments: Array<any>;
+
   ngOnInit() {
+    //this.onVisitHistory();
   }
+
+  // onVisitHistory(){
+  //   this.patientService.getVisitHistory().subscribe(
+  //     res => {
+  //       this.appointments = res['appointments'];
+  //     },
+  //     err => {
+  //       console.log(err);
+  //     }
+  //   )
+  // }
 
 }

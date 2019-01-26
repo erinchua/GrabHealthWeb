@@ -212,7 +212,7 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
 
 //Edit Patient Details
 router.post('/editPatientDetail', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password, contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
+    Patient.findByIdAndUpdate(req.user._id, {contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
         if (err) {
             res.json({success: false, msg: "Error"});
         } else {
@@ -269,6 +269,26 @@ router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (r
                     }
                 }
             });
+        }
+    });
+});
+
+// Get Patient's Visit History
+// router.get('/getVisitHistory', passport.authenticate('jwt', {session: false}), (req, res) => {
+//     Appointment.find({patient: req.user._id})
+//         .populate({path: 'date', select: 'date'}, {path: 'billedAmount', select: ''}, {path: 'clinicName', select: '_id: 0, name'})
+//         .exec(function (err, appointments){
+//             res.send({'appointments': appointments}).status(201);
+//         });
+// });
+
+//Patient Change Password
+router.post('/changePassword', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password}, {upsert:true}, (err, patient) => {
+        if (err) {
+            res.json({success: false, msg: "Error"});
+        } else {
+            res.json({success: true, msg: "Password have been changed"});
         }
     });
 });

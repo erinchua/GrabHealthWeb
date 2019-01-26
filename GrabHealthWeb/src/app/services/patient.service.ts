@@ -93,4 +93,17 @@ export class PatientService {
         })});    
     }
 
+    //Get Patient's Visit History
+    getVisitHistory(){
+        return this.http.get(this.url + '/patient/getVisitHistory', {headers: new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })});
+    }
+
+    changePassword(patient){
+        return this.http.post(this.url + '/patient/changePassword', patient, {headers: new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })}); 
+    }
+
 }
