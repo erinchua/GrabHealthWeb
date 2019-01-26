@@ -172,7 +172,7 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                                     else {
                                         if(checking2){
                                             let newAppointment = new Appointment({
-                                                patient: req.user._id,
+                                                patient: req.user._id, 
                                                 clinic: req.body._id,
                                                 clinicName: req.body
                                             });
@@ -182,7 +182,7 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                                                 } else {
                                                     if (appointment){
                                                         Appointment.find({})
-                                                        .populate('clinicName', '_id: 0, name')
+                                                        .populate({path: 'clinicName', select: '_id: 0, name'})
                                                         .exec(function (err, appointments){
                                                             return res.json({success: true, msg: "Successfully booked"});
                                                         }) 
@@ -223,8 +223,8 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 });
 
 //Get Patient's Booked Clinic
-router.get('/getBookedClinic', (req, res) => {
-    Appointment.find({})
+router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Appointment.find({patient: req.user._id})
         .exec(function (err, appointments){
             res.send({'appointments': appointments}).status(201);
         });
