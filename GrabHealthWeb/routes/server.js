@@ -343,7 +343,7 @@ router.post('/rejectAppointmentRequest', (req, res) => {
                                 console.log('Cannot show in appointment status');
                             if(appointmentFound){
                                 appointmentFound.status = 'Rejected';
-                                appointmentFound.remarks = req.body.remarks;
+                                apppointmentFound.remarks = req.body.remarks;
                                 appointmentFound.save();
                             }
                             
@@ -357,7 +357,6 @@ router.post('/rejectAppointmentRequest', (req, res) => {
     });
 });
 
-
 //get current patient
 router.get("/current-patient", (req, res) => {
     Queue.findOne({ "clinic": req.body.clinic, "patients": { $all: [patient._id] }}).exec(function (err, patients) {
@@ -369,6 +368,32 @@ router.get("/current-patient", (req, res) => {
             res.send({ success: true, 'patients': patients }).status(201);
     });
 });
+
+// Complete visit
+router.post("/removeFromQueue", (req, res) => {
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err)
+            return res.json({success: false, msg: err})
+        if(patient){
+            Queue.findOne({clinic: req.body.clinic}, (err2, queue) => {
+                if(err2)
+                    return res.json({success:false, msg: err2})
+                if(queue){
+                    queue.patients.remove(patient._id);
+                    queue.save(function(err3, queueSaved){
+                        if(err3)
+                            return res.json({success:false, msg: err3})
+                        if(queueSaved)
+                            return res.json({success:true, msg: 'Removed patient from queue' })
+                    });
+                }
+            });
+        } else {
+            res.json({success: false, msg: 'Patient does not exist'})
+        }
+    })
+});
+
 
 // // Generate payment details
 // router.post('/getPayment', (req, res) => {
