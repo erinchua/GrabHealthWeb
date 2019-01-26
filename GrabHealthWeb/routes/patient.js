@@ -232,24 +232,41 @@ router.get('/getBookedClinic', (req, res) => {
 
 //Cancel Patient's Booking
 router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Appointment.findOne({patient: req.user._id}, (err, appointment) => {
+    Appointment.findOne({patient: req.user._id, $or: [{status: 'Pending'}, {status: 'Accepted'}]}, (err, appointment) => {
         if (err) {
             console.log("Appointment Error");
             res.json({success: false, msg: "Appointment doesn't exist"});
         }
         if (appointment) {
-            appointment.remove(function(err, appointmentRemoved){
-                if (err){
-                    res.json({success: false, msg: "Appointment doesn't exist"});
-                }
-                if (appointmentRemoved){
-                    PendingList.updateOne({patients: {$all: [req.user._id]}}, {$pull: {patients :{$in: [req.user._id]}}}, (err, pendingListRemoved) => {
-                        if (err) {
-                            res.json({success: false, msg: "Appointment doesn't exist"});
-                        } else {
-                            res.json({success: true, msg: "Appointment is cancalled"});
-                        }
-                    });
+            appointment.status = 'Cancelled';
+            appointment.save(function(err, statusCancelled){
+                if (err) {
+                    return res.json({success: false, msg: err}).status(404);
+                } else {
+                    if (statusCancelled){
+                        Queue.findOne({patients: req.user._id}, (err2, cancelQueue) => {
+                            if (err2){
+                                return res.json({success: false, msg: "Appointment doesn't exist"});
+                            } else {
+                                if (cancelQueue){
+                                    cancelQueue.patients.remove(req.user._id);
+                                    cancelQueue.save();
+                                    return res.json({success: true, msg: "Appointment is cancelled"});
+                                }
+                            }
+                        });
+                        PendingList.findOne({patients: req.user._id}, (err3, cancelPending) => {
+                            if (err3) {
+                                return res.json({success: false, msg: "Appointment doesn't exist"});
+                            } else {
+                                if (cancelPending){
+                                    cancelPending.patients.remove(req.user._id);
+                                    cancelPending.save();
+                                    return res.json({success: true, msg: "Appointment is cancelled"});
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }
