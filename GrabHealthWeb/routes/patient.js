@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Appointment = require('../models/appointment');
 const axios = require('axios');
-const Queue = require('../models/queue');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
