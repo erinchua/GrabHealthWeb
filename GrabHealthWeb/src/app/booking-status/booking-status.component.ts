@@ -13,6 +13,7 @@ export class BookingStatusComponent implements OnInit {
   constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
 
   appointments:Array<any>;
+  patients:Array<any>;
 
   ngOnInit() {
     this.getBookedClinics();
@@ -22,10 +23,12 @@ export class BookingStatusComponent implements OnInit {
     this.patientService.getBookedClinics().subscribe(
       res=> {
         this.appointments = res['appointments'];
+        this.patients = res['patients'];
       }, 
       err=> {
         console.log(err);
       });
+      
   } 
 
   onCancel(){
