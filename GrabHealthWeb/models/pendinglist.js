@@ -10,7 +10,10 @@ const PendingListSchema = mongoose.Schema({
     patients: [{
         type: Schema.Types.ObjectId,
         ref: 'Patient'
-    }] 
+    }],
+    remarks: {
+        type: String,
+    }
 });
 
 const PendingList = module.exports = mongoose.model('PendingList', PendingListSchema);

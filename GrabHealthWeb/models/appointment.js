@@ -17,7 +17,7 @@ const AppointmentSchema = mongoose.Schema({
     status: {
         type: String,
         required: true,
-        default: 'pending'
+        default: 'Pending'
     },
     date: {
         type: Schema.Types.ObjectId,
