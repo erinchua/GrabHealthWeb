@@ -25,33 +25,7 @@
                     </div>
 
                     <div class="form-group text-right">
-                        <a href="#" data-toggle="modal" data-target="#modal">Forget Password</a>
-
-                        <div class="modal" id="modal">
-                            <div class="modal-dialog" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title"><strong>Reset Password</strong></h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                  <p class="text-center">Please enter the following details to request for a password reset.</p>
-                                  <div class="col text-left">
-                                        <label for="contactNo">Contact No.:</label>
-                                        <input type = "text" class="col-sm-5 form-control" id="contactNo" formControlName = "contactNo">
-                                        <label for="nric">NRIC Issue Date:</label>
-                                        <input type = "date" class="col-sm-5 form-control" id="nric" formControlName = "nric">
-                                  </div>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-outline-primary">Send</button>
-                                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                        <a href="#" data-toggle="modal" data-target="#enterDetailsModal">Forget Password</a>
                     </div>
                     
 
@@ -64,3 +38,78 @@
 
     </div>
 </form>
+
+<!--Enter Details Modal Box-->
+<div>
+    <div class="modal fade" id="enterDetailsModal" tabindex="-1" role="dialog" aria-labelledby="enterDetailsModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="enterDetailsModalTitle"><strong>Enter Details</strong></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            
+            <div class="modal-body">
+            <div class="row rowspacing">
+                <div class="col">
+                <form [formGroup]="enterDetailsForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="nric">NRIC:</label>
+                        <input type = "text" class="form-control" id="nric" formControlName = "nric"[ngClass]="{ 'is-invalid': submitted && enterDetailsForm.controls.nric.errors }">
+                        <div *ngIf="submitted && enterDetailsForm.controls.nric.errors" class="invalid-feedback">
+                            <div *ngIf="enterDetailsForm.controls.nric.errors.required">Required!</div>
+                        </div>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="enterDetailsForm">Contact Number:</label>
+                        <input  type="text" class="form-control" id="contactNo" formControlName="contactNo" [ngClass]="{ 'is-invalid': submitted && enterDetailsForm.controls.contactNo.errors }">
+                        <div *ngIf="submitted && enterDetailsForm.controls.contactNo.errors" class="invalid-feedback">
+                            <div *ngIf="enterDetailsForm.controls.contactNo.errors.required">Required!</div>
+                        </div>
+                    </div>
+    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#verifyModal" data-dismiss="modal">Send</button>
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<!--End of Enter Details Modal-->
+
+<!--Verify Modal Box-->
+<div>
+    <div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="verifyModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="verifyModalTitle"><strong>Verify</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row rowspacing">
+                        <div class="col">
+                            <form action="/verify" method="post">
+                                <input name="pin" type="number" placeholder="1234" required>
+                                <input type="hidden" name="requestId" value="<%= requestId %>" >
+                                <button type="submit" class="btn btn-secondary" data-toggle="modal" data-target="#forgetPasswordModal" data-dismiss="modal">Verify</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End of Verify Modal-->

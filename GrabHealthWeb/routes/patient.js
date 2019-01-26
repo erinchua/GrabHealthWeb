@@ -293,4 +293,24 @@ router.post('/changePassword', passport.authenticate('jwt', {session: false}), (
     });
 });
 
+//Forget Password
+// router.post('/forgetPassword', (req, res) => {
+//     let contactNo = req.body.contactNo;
+//     let nric = req.body.nric;
+//     console.log(contactNo);
+//     console.log(nric);
+//     nexmo.verify.request({number: contactNo}, (err, result) => {
+//         if (err) {
+//             console.log("Error");
+//         } else {
+//             let requestId = result.requestId;
+//             if (result.status == '0'){
+//                 res.render('verify', {requestId: requestId});
+//             } else {
+//                 res.status(401).send(result.error_text);
+//             }
+//         }
+//     });
+// });
+
 module.exports = router;

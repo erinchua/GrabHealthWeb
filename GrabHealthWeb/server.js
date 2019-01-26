@@ -14,9 +14,14 @@ const env_config = require('dotenv').config();
 const bodyCleaner = require('express-body-cleaner');
 var fs = require('fs');
 var https = require('https');
-
-// const Nexmo = require('nexmo');
+const Nexmo = require('nexmo');
 // const socketio = require('socket.io');
+
+const nexmo = new Nexmo({
+    apiKey: 'f831826d',
+    apiSecret: 'SBf911A5UR6GSOlb'
+});
+
 const internalServer = express();
 const appPort = 60003;
 internalServer.use(helmet());

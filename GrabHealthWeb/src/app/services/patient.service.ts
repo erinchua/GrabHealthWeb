@@ -100,8 +100,16 @@ export class PatientService {
         })});
     }
 
+    //Change Patient's Password
     changePassword(patient){
         return this.http.post(this.url + '/patient/changePassword', patient, {headers: new HttpHeaders({
+            'Authorization': localStorage.getItem("id_token")
+        })}); 
+    }
+
+    //Forget Password
+    forgetPassword(patient){
+        return this.http.post(this.url + '/patient/forgetPassword', patient, {headers: new HttpHeaders({
             'Authorization': localStorage.getItem("id_token")
         })}); 
     }
