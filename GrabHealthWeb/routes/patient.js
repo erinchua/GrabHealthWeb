@@ -224,6 +224,7 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 //Get Patient's Booked Clinic
 router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
     Appointment.find({patient: req.user._id})
+        .populate({path: 'patient', select: 'queueNo'})
         .exec(function (err, appointments){
             res.send({'appointments': appointments}).status(201);
         });
