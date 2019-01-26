@@ -13,7 +13,7 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th scope="col">Reference Number</th>
+          <th scope="col">Queue Number</th>
           <th scope="col">Clinic Name</th>
           <th scope="col">Booking Status</th>
           <th scope="col">Remarks</th>
@@ -21,7 +21,7 @@
       </thead>
       <tbody *ngFor="let appointment of appointments">
         <tr>
-          <td>0001</td>
+          <td></td>
           <td>{{ appointment.clinicName.name }}</td>
           <td>{{ appointment.status }}</td>
           <td><button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#cancelModal"><i class="fa fa-times-circle"></i> Cancel</button></td>
