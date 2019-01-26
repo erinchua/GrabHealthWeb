@@ -18,7 +18,6 @@ if(process.env.CLINICSERVERURL){
 
 //Register
 router.post('/register', (req, res, next) => {
-    console.log(req.body);
     let newPatient = new Patient({
         firstName: req.body.firstName,
         lastName: req.body.lastName,

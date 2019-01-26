@@ -27,7 +27,6 @@ nexmo.message.sendSms(
 
 //Admin
 router.post('/createClinic', (req, res) => {
-    console.log(req.body);
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
         if(err){
@@ -98,7 +97,6 @@ router.post('/getAllPatients', (req, res) => {
 // Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, '-password' ,(err, patient) => {
         if(err){
             console.log("failed " + err)
@@ -161,13 +159,11 @@ router.post('/updateWalkInPatientDetails', (req, res) => {
 
 // Add patient to queue
 router.post('/addPatientToQueue', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
             return res.json({success: false, msg:'Error'});
         }
         if(patient){
-            console.log(patient);
             Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
@@ -181,7 +177,6 @@ router.post('/addPatientToQueue', (req, res) => {
                             queueList.patients.push(patient._id);
                             var queueNo = queueList.queueNo + 1;
                             queueList.queueNo = queueNo;
-                            console.log(queueList.queueNo);
                             queueList.save(function(err2, queueListSaved) {
                                 if(err2){
                                     return res.json({success: false, msg: err2}).status(404);
@@ -220,7 +215,6 @@ router.post('/queueList', (req, res) => {
 
 // Remove patient from queue
 router.post('/removePatientFromQueue', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
             return res.json({success: false, msg: err});
@@ -244,7 +238,6 @@ router.post('/removePatientFromQueue', (req, res) => {
 
 // Get pending list details
 router.post('/pendingList', (req, res) => {
-    console.log(req.body);
     PendingList.findOne({ clinic: req.body.clinic })
     .populate({ path: 'patients', select: '-password' })
     .exec(function (err, pendingList){
@@ -257,7 +250,6 @@ router.post('/pendingList', (req, res) => {
 
 // Get all patients (web + walk-in)
 router.post('/all-patient-list', (req, res) => {
-    console.log(req.body);
     Patient.find({ clinics: {$all: [req.body.clinic]} })
     .exec(function (err, patientRecords){
         if(err)
@@ -307,6 +299,7 @@ router.post('/acceptAppointmentRequest', (req, res) => {
                                                         console.log('Cannot show in appointment status');
                                                     if(appointmentFound){
                                                         appointmentFound.status = 'Accepted';
+                                                        appointmentFound.remarks = req.body.remarks;
                                                         appointmentFound.save();
                                                     }                                                     
                                                 })
@@ -350,6 +343,7 @@ router.post('/rejectAppointmentRequest', (req, res) => {
                                 console.log('Cannot show in appointment status');
                             if(appointmentFound){
                                 appointmentFound.status = 'Rejected';
+                                appointmentFound.remarks = req.body.remarks;
                                 appointmentFound.save();
                             }
                             
@@ -362,6 +356,7 @@ router.post('/rejectAppointmentRequest', (req, res) => {
         }
     });
 });
+
 
 //get current patient
 router.get("/current-patient", (req, res) => {

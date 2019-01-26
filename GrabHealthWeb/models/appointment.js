@@ -26,6 +26,9 @@ const AppointmentSchema = mongoose.Schema({
     billedAmount: {
         type: Schema.Types.ObjectId,
         ref: 'Payment'
+    },
+    remarks: {
+        type: String
     }
 });
 
