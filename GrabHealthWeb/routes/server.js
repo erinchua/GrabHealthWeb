@@ -27,7 +27,6 @@ nexmo.message.sendSms(
 
 //Admin
 router.post('/createClinic', (req, res) => {
-    console.log(req.body);
     let newClinic = new Clinic(req.body);
     Clinic.addClinic(newClinic, (err, clinic) => {
         if(err){
@@ -98,7 +97,6 @@ router.post('/getAllPatients', (req, res) => {
 // Receptionist
 // Register walk in patient
 router.post('/registerWalkInPatient', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, '-password' ,(err, patient) => {
         if(err){
             console.log("failed " + err)
@@ -161,13 +159,11 @@ router.post('/updateWalkInPatientDetails', (req, res) => {
 
 // Add patient to queue
 router.post('/addPatientToQueue', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
             return res.json({success: false, msg:'Error'});
         }
         if(patient){
-            console.log(patient);
             Queue.findOne({"clinic": req.body.clinic}).exec(function(err2, queueList) {
                 if(err2)
                     return res.json({success: false, msg: err2}).status(404);
@@ -181,7 +177,6 @@ router.post('/addPatientToQueue', (req, res) => {
                             queueList.patients.push(patient._id);
                             var queueNo = queueList.queueNo + 1;
                             queueList.queueNo = queueNo;
-                            console.log(queueList.queueNo);
                             queueList.save(function(err2, queueListSaved) {
                                 if(err2){
                                     return res.json({success: false, msg: err2}).status(404);
@@ -220,7 +215,6 @@ router.post('/queueList', (req, res) => {
 
 // Remove patient from queue
 router.post('/removePatientFromQueue', (req, res) => {
-    console.log(req.body);
     Patient.findOne({nric: req.body.nric}, (err, patient) => {
         if(err){
             return res.json({success: false, msg: err});
@@ -244,7 +238,6 @@ router.post('/removePatientFromQueue', (req, res) => {
 
 // Get pending list details
 router.post('/pendingList', (req, res) => {
-    console.log(req.body);
     PendingList.findOne({ clinic: req.body.clinic })
     .populate({ path: 'patients', select: '-password' })
     .exec(function (err, pendingList){
@@ -252,6 +245,18 @@ router.post('/pendingList', (req, res) => {
             return res.json({success: false, msg: err});
         return res.json({success: true,'pendingList': pendingList}).status(201);
     }) 
+});
+
+
+// Get all patients (web + walk-in)
+router.post('/all-patient-list', (req, res) => {
+    Patient.find({ clinics: {$all: [req.body.clinic]} })
+    .exec(function (err, patientRecords){
+        if(err)
+            return res.json({success: false, msg: err});
+        if(patientRecords)
+            return res.json({success: true,'patientRecords': patientRecords}).status(201);
+    })  
 });
 
 
@@ -288,6 +293,16 @@ router.post('/acceptAppointmentRequest', (req, res) => {
                                                 pendingList.save();
                                                 patient.queueNo = queueNo;
                                                 patient.save();
+                                                var pending = "Pending";
+                                                Appointment.findOne({patient: patient._id, clinic: queueList.clinic, status: pending}, (err, appointmentFound) =>{
+                                                    if(err)
+                                                        console.log('Cannot show in appointment status');
+                                                    if(appointmentFound){
+                                                        appointmentFound.status = 'Accepted';
+                                                        appointmentFound.remarks = req.body.remarks;
+                                                        appointmentFound.save();
+                                                    }                                                     
+                                                })
                                                 return res.json({success: true, msg: 'Patient has successfully been added to queue'});
                                             } else {
                                                 return res.json({success: false, msg: 'Patient cannot be added to queue'});
@@ -323,6 +338,16 @@ router.post('/rejectAppointmentRequest', (req, res) => {
                     if(pendingList) {
                         pendingList.patients.remove(patient);
                         pendingList.save();
+                        Appointment.findOne({patient: patient._id, clinic: pendingList.clinic, status: "Pending"}, (err, appointmentFound) =>{
+                            if(err)
+                                console.log('Cannot show in appointment status');
+                            if(appointmentFound){
+                                appointmentFound.status = 'Rejected';
+                                apppointmentFound.remarks = req.body.remarks;
+                                appointmentFound.save();
+                            }
+                            
+                        })
                         return res.json({success: true, msg: "Patient's appointment request is rejected"});        
                     }
                 });
@@ -346,5 +371,61 @@ router.get("/current-patient", (req, res) => {
         }
     });
 });
+
+// Complete visit
+router.post("/removeFromQueue", (req, res) => {
+    Patient.findOne({nric: req.body.nric}, (err, patient) => {
+        if(err)
+            return res.json({success: false, msg: err})
+        if(patient){
+            Queue.findOne({clinic: req.body.clinic}, (err2, queue) => {
+                if(err2)
+                    return res.json({success:false, msg: err2})
+                if(queue){
+                    queue.patients.remove(patient._id);
+                    queue.save(function(err3, queueSaved){
+                        if(err3)
+                            return res.json({success:false, msg: err3})
+                        if(queueSaved)
+                            return res.json({success:true, msg: 'Removed patient from queue' })
+                    });
+                }
+            });
+        } else {
+            res.json({success: false, msg: 'Patient does not exist'})
+        }
+    })
+});
+
+
+// // Generate payment details
+// router.post('/getPayment', (req, res) => {
+//     console.log(req.body);
+//     Appointment.findOne({nric: req.body.nric}), (err, patientExist) => {
+//         if(err){
+//             return res.json({success: false, msg: err});
+//         } else {
+//             if(patientExist){
+//                 Payment.find({}).exec(function(err2, payment) {
+//                     if(err2)
+//                         return res.json({success: false, msg: err2}).status(404);
+//                     if(payment) {
+//                         payment.find({clinic: req.body.clinic})   
+//                         .populate({ path: 'payment' })
+//                         .exec(function (err, payment) {
+//                             console.log(payment);
+//                             if(err)
+//                                 return res.send({success: false, msg: err}).status(404);
+//                             return res.send({success: true, 'patients': patients }).status(201);
+//                         })
+//                     }
+//                 });
+//             } else 
+//                 return res.json({success: false, msg: "Payment cannot be created"});        
+//         }
+//     }
+// });
+
+
 
 module.exports = router;

@@ -3,6 +3,7 @@ const router = express.Router();
 const Patient = require('../models/patient');
 const Clinic = require('../models/clinic');
 const PendingList = require('../models/pendinglist');
+const Queue = require('../models/queue');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
@@ -12,12 +13,11 @@ const axios = require('axios');
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
 } else {
-    var webserverurl =  'http://localhost:60003';
+    var webserverurl =  'http://localhost:4560';
 }
 
 //Register
 router.post('/register', (req, res, next) => {
-    console.log(req.body);
     let newPatient = new Patient({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -145,52 +145,60 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                     if(err)
                         console.log(err)
                     if(!foundPatient){
-                        pendingList.patients.push(req.user._id);
-                        Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
-                            if(err)
-                                console.log(err);
-                            if(!patientWithClinic){
-                                Patient.findById(req.user._id,(err, patient) => {
+                        Queue.findOne({patients: {$all: [req.user._id]}}, (queueErr, foundPatientInQueue) => {
+                            if(queueErr)
+                                console.log(err)
+                            if(!foundPatientInQueue){
+                                pendingList.patients.push(req.user._id);
+                                Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
                                     if(err)
-                                        console.log(err)
-                                    if(patient){
-                                        patient.clinics.push(pendingList.clinic);
-                                        patient.save();
-                                    }
-                                })
-                            }
-                        });
-                        pendingList.save(function (e2, checking2) {
-                            if (e2) {
-                                return res.json({success: false, msg: "Patient already exists in pendingList"});
-                            } 
-                            else {
-                                if(checking2){
-                                    let newAppointment = new Appointment({
-                                        patient: req.user._id,
-                                        clinic: req.body._id,
-                                        clinicName: req.body
-                                    });
-                                    Appointment.addAppointment(newAppointment, (err, appointment) => {
-                                        if (err) {
-                                            return res.json({success: false, msg: "Patient already exists in pendingList"});
-                                        } else {
-                                            if (appointment){
-                                                Appointment.find({})
-                                                .populate('clinicName', '_id: 0, name')
-                                                .exec(function (err, appointments){
-                                                    return res.json({success: true, msg: "Successfully booked"});
-                                                }) 
-                                            } else {
-                                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                        console.log(err);
+                                    if(!patientWithClinic){
+                                        Patient.findById(req.user._id,(err, patient) => {
+                                            if(err)
+                                                console.log(err)
+                                            if(patient){
+                                                patient.clinics.push(pendingList.clinic);
+                                                patient.save();
                                             }
+                                        })
+                                    }
+                                });
+                                pendingList.save(function (e2, checking2) {
+                                    if (e2) {
+                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                    } 
+                                    else {
+                                        if(checking2){
+                                            let newAppointment = new Appointment({
+                                                patient: req.user._id, 
+                                                clinic: req.body._id,
+                                                clinicName: req.body
+                                            });
+                                            Appointment.addAppointment(newAppointment, (err, appointment) => {
+                                                if (err) {
+                                                    return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                } else {
+                                                    if (appointment){
+                                                        Appointment.find({})
+                                                        .populate({path: 'clinicName', select: '_id: 0, name'})
+                                                        .exec(function (err, appointments){
+                                                            return res.json({success: true, msg: "Successfully booked"});
+                                                        }) 
+                                                    } else {
+                                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                    }
+                                                }
+                                            });
                                         }
-                                    });
-                                }
+                                    }
+                                });
+                            } else {
+                                return res.json({success: false, msg: "You are already in a queue!"});
                             }
                         });
                     } else {
-                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                        return res.json({success: false, msg: "You have already made a booking!"});
                     }
                 });
                
@@ -214,8 +222,8 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 });
 
 //Get Patient's Booked Clinic
-router.get('/getBookedClinic', (req, res) => {
-    Appointment.find({})
+router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+    Appointment.find({patient: req.user._id})
         .exec(function (err, appointments){
             res.send({'appointments': appointments}).status(201);
         });
@@ -223,24 +231,41 @@ router.get('/getBookedClinic', (req, res) => {
 
 //Cancel Patient's Booking
 router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Appointment.findOne({patient: req.user._id}, (err, appointment) => {
+    Appointment.findOne({patient: req.user._id, $or: [{status: 'Pending'}, {status: 'Accepted'}]}, (err, appointment) => {
         if (err) {
             console.log("Appointment Error");
             res.json({success: false, msg: "Appointment doesn't exist"});
         }
         if (appointment) {
-            appointment.remove(function(err, appointmentRemoved){
-                if (err){
-                    res.json({success: false, msg: "Appointment doesn't exist"});
-                }
-                if (appointmentRemoved){
-                    PendingList.updateOne({patients: {$all: [req.user._id]}}, {$pull: {patients :{$in: [req.user._id]}}}, (err, pendingListRemoved) => {
-                        if (err) {
-                            res.json({success: false, msg: "Appointment doesn't exist"});
-                        } else {
-                            res.json({success: true, msg: "Appointment is cancalled"});
-                        }
-                    });
+            appointment.status = 'Cancelled';
+            appointment.save(function(err, statusCancelled){
+                if (err) {
+                    return res.json({success: false, msg: err}).status(404);
+                } else {
+                    if (statusCancelled){
+                        Queue.findOne({patients: req.user._id}, (err2, cancelQueue) => {
+                            if (err2){
+                                return res.json({success: false, msg: "Appointment doesn't exist"});
+                            } else {
+                                if (cancelQueue){
+                                    cancelQueue.patients.remove(req.user._id);
+                                    cancelQueue.save();
+                                    return res.json({success: true, msg: "Appointment is cancelled"});
+                                }
+                            }
+                        });
+                        PendingList.findOne({patients: req.user._id}, (err3, cancelPending) => {
+                            if (err3) {
+                                return res.json({success: false, msg: "Appointment doesn't exist"});
+                            } else {
+                                if (cancelPending){
+                                    cancelPending.patients.remove(req.user._id);
+                                    cancelPending.save();
+                                    return res.json({success: true, msg: "Appointment is cancelled"});
+                                }
+                            }
+                        });
+                    }
                 }
             });
         }
