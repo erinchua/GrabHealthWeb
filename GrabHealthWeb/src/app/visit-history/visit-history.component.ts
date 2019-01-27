@@ -11,32 +11,23 @@ export class VisitHistoryComponent implements OnInit {
 
   constructor(private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
 
-  appointment: any;
-  date: '';
-  billedAmount: '';
-  clinicName: '';
-
-  appointments = [{
-    date: '12/01/2019',
-    billedAmount: '$30',
-    clinicName: 'Vlad Clinic'
-  }];
-
-  //appointments: Array<any>;
+  appointments: Array<any>;
+  clinics: Array<any>;
 
   ngOnInit() {
-    //this.onVisitHistory();
+    this.getVisitHistory();
   }
 
-  // onVisitHistory(){
-  //   this.patientService.getVisitHistory().subscribe(
-  //     res => {
-  //       this.appointments = res['appointments'];
-  //     },
-  //     err => {
-  //       console.log(err);
-  //     }
-  //   )
-  // }
+  getVisitHistory(){
+    this.patientService.getVisitHistory().subscribe(
+      res => {
+        this.appointments = res['appointments'];
+        this.clinics = res['clinics'];
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
 
 }
