@@ -333,33 +333,51 @@ router.post('/forgetPassword', (req, res) => {
         } else {
             if (getPatient){
                 var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
-                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
+                let requestId = null;
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, requestResult) => {
                     if (err) {
                         console.log("Send message error");
                     } else {
-                        const from = 'GrabHealth';
-                        const to = '65' + contactNo;
-                        const text = randomPassword;
-
-                        nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
-                            if (err) {
-                                console.log(err); 
-                            } else {
-                                if (sendMessage) {
-                                    bcrypt.genSalt(10, (err, salt) => {
-                                        bcrypt.hash(randomPassword, salt, (err, hash) =>{
-                                            if(err) throw err;
-                                            getPatient.password = hash;
-                                            getPatient.save();
-                                            console.log("Message sent");
-                                            return res.json({success: true, msg: "Password have been reset"});
-                                        });
-                                    });
-                                }
-                            }
-                        });
+                        requestId = requestResult.requestId;
+                        if (requestResult.status == '0'){
+                            res.render('verify', {requestId : requestId});
+                        } else {
+                            return res.json({success: false, msg: "Failed to send message"});
+                        }
                     }
                 });
+
+                nexmo.verify.check({request_id : req.body.requestId, code: req.body.pin}, (err, checkResult) => {
+                    if (err) {
+                        console.log("Send message error2");
+                    } else {
+                        if (checkResult && requestResult.status == '0'){
+                            const from = 'GrabHealth';
+                            const to = '65' + contactNo;
+                            const text = randomPassword;
+
+                            nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
+                                if (err) {
+                                    console.log(err); 
+                                } else {
+                                    if (sendMessage) {
+                                        bcrypt.genSalt(10, (err, salt) => {
+                                            bcrypt.hash(randomPassword, salt, (err, hash) =>{
+                                                if(err) throw err;
+                                                getPatient.password = hash;
+                                                getPatient.save();
+                                                console.log("Message sent");
+                                                return res.json({success: true, msg: "Password have been reset"});
+                                            });
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            return res.json({success: false, msg: "Failed to send message"});
+                        }
+                    }
+                })
             }
         }
     });
