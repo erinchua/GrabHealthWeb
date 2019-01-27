@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
     });
     
 
-app.use(express.static(path.join(__dirname, 'src')));
+//app.use(express.static(path.join(__dirname, 'src')));
 
 //Body Parser Middleware
 app.use(bodyParser.json());
@@ -67,9 +67,14 @@ require('./config/passport')(passport);
 
 app.use('/patient', patient);
 
-//External Server
-app.use('/GrabHealthWeb', ExtServer);
 
+//External Server
+if (process.env.HTTPS) {
+    //Don't allow server with portforwarding to access internal routes
+} else {
+    app.use('/GrabHealthWeb', ExtServer);
+
+}
 
 mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
@@ -144,7 +149,11 @@ router.route('/issues/delete/:id').get((req, res) => {
     })
 })
 
+app.get('/', function(req, res){
+    res.redirect('/GrabHealth');
+})
 app.use('/', router);
+
 
 //Serve static files
 app.use('/GrabHealth/', express.static(path.join(__dirname, 'public')));

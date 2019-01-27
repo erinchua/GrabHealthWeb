@@ -49,6 +49,8 @@
     "nexmo": "^2.4.0",
     "ng-recaptcha": "^4.2.1",
     "ngx-captcha": "^6.2.1",
+    "nodemailer": "^5.1.1",
+    "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "popper.js": "^1.14.5",
