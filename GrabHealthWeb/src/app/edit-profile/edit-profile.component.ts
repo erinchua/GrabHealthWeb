@@ -13,26 +13,28 @@ import { CustomValidators } from '../custom-validators';
 export class EditProfileComponent implements OnInit {
 
   changePasswordForm = new FormGroup({
-    //password: new FormControl('password')
-    contactNo: new FormControl('contactNo')
+    password: new FormControl('password'),
+    newPassword: new FormControl('newPassword')
+    //contactNo: new FormControl('contactNo')
   });
 
   patient:Object;
 
   constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService, private formBuilder: FormBuilder) {
     this.changePasswordForm = this.formBuilder.group({
-      // password: ['', Validators.compose([Validators.required, 
-      //                                 CustomValidators.patternValidator(/\d/, { hasNumber: true }),
-      //                                 CustomValidators.patternValidator(/[A-Z]/, { hasUpperCase: true }),
-      //                                 CustomValidators.patternValidator(/[a-z]/, { hasLowerCase: true }),
-      //                                 CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true }),
-      //                                 Validators.minLength(8)])],
-      // confirmPassword: ['', Validators.required]
-      contactNo: ['', Validators.required]
+      password: ['', Validators.required],
+      newPassword: ['', Validators.compose([Validators.required, 
+                                      CustomValidators.patternValidator(/\d/, { hasNumber: true }),
+                                      CustomValidators.patternValidator(/[A-Z]/, { hasUpperCase: true }),
+                                      CustomValidators.patternValidator(/[a-z]/, { hasLowerCase: true }),
+                                      CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true }),
+                                      Validators.minLength(8)])],
+      confirmPassword: ['', Validators.required]
+      //contactNo: ['', Validators.required]
     },
-    // {
-    //   validator: CustomValidators.passwordMatchValidator
-    // }
+    {
+      validator: CustomValidators.changePasswordMatchValidator
+    }
     );
   }
 
@@ -83,9 +85,9 @@ export class EditProfileComponent implements OnInit {
       res => {
         console.log(res);
         if (res['success']){
-          flashMessagesService.show('Message is sent', { cssClass: 'alert-success', timeout: 3000});
+          flashMessagesService.show('Password have been changed', { cssClass: 'alert-success', timeout: 3000});
         } else {
-          flashMessagesService.show('Failed to send message', { cssClass: 'alert-danger', timeout: 3000 });
+          flashMessagesService.show('Failed to change password', { cssClass: 'alert-danger', timeout: 3000 });
         }
       }, 
       err => {

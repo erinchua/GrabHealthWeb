@@ -92,9 +92,9 @@ router.post('/register', (req, res, next) => {
                 .catch((error) => {
                     console.log(error);
                 });
-                res.json({success: true, msg: "Patient successfully registered"});
+                return res.json({success: true, msg: "Patient successfully registered"});
             } else {
-                res.json({success: false, msg: "Failed to register user"});
+                return res.json({success: false, msg: "Failed to register user"});
             }
         }
     });
@@ -120,7 +120,7 @@ router.post('/authenticate', (req, res, next) => {
                     expiresIn: 604800 // 1 week
                 });
 
-                res.json ({
+                return res.json ({
                     success: true,
                     token: 'JWT '+token,
                     patient: {
@@ -138,7 +138,7 @@ router.post('/authenticate', (req, res, next) => {
                     msg: "Successful Login"
                 });
             } else {
-               return res.json({success: false, msg: "Wrong Password"})
+               return res.json({success: false, msg: "Wrong Password"});
             }
         })
     });
@@ -329,7 +329,7 @@ router.post('/forgetPassword', (req, res) => {
     let contactNo = req.body.contactNo;
     Patient.getPatientByEmail(req.body.email, (err, getPatient) => {
         if (err) {
-            console.log("getPatient Error");
+            console.log("Error getting patient");
         } else {
             if (getPatient){
                 var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
@@ -362,53 +362,42 @@ router.post('/forgetPassword', (req, res) => {
                 });
             }
         }
-    })
+    });
 });
 
 //Patient Change Password
 router.post('/changePassword', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
 
-    let contactNo = req.body.contactNo;
     Patient.getPatientById(req.user._id, (err, getPatient) => {
         if (err) {
-            console.log("getPatient Error");
+            console.log("Error getting patient");
         } else {
             if (getPatient){
-                var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
-                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
-                    if (err) {
-                        console.log("Send message error");
+                let patient = new Patient ({
+                    password: req.body.password,
+                    newPassword: req.body.newPassword,
+                    confirmPassword: req.body.confirmPassword
+                });
+                getPatient.update(req.body._id, (err, updatePassword) => {
+                    if (err){
+                        console.log("Error updating");
+                        return res.json({success: false, msg: "Password cannot be updated"});
                     } else {
-                        const from = 'GrabHealth';
-                        const to = '65' + contactNo;
-                        const text = randomPassword;
-
-                        nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
-                            if (err) {
-                                console.log("Failed to send message"); 
-                                return res.json({success: false, msg: "Failed to send message"});
-                            } else {
-                                console.log("tesing1");
-                                if (sendMessage) {
-                                    console.log("testing2");
-                                    bcrypt.genSalt(10, (err, salt) => {
-                                        bcrypt.hash(randomPassword, salt, (err, hash) =>{
-                                            if(err) throw err;
-                                            //set hashed random password as password in database
-                                            req.user.password = hash;
-                                            req.user.save();
-                                            console.log("Message sent");
-                                            //return res.json({success: true, msg: "Password have been reset"});
-                                        });
-                                    });
-                                }
-                            }
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(req.body.newPassword, salt, (err, hash) =>{
+                                if(err) throw err;
+                                getPatient.password = hash;
+                                getPatient.save();
+                                console.log("Password updated");
+                                return res.json({success: true, msg: "Password have been updated"});
+                            });
                         });
                     }
                 });
+                
             }
         }
-    })
+    });
 });
 
 

@@ -40,6 +40,8 @@ export class LoginComponent implements OnInit {
   onSubmit(){
     this.submitted = true;
 
+    var flashMessagesService = this.flashMessagesService;
+
     if (this.loginForm.invalid){
       return;
     }
@@ -47,13 +49,16 @@ export class LoginComponent implements OnInit {
     this.patientService.authenticatePatient(this.loginForm.value).subscribe(
       res => {
         if(res['success']) {
+          flashMessagesService.show('Successfully login', { cssClass: 'alert-success', timeout: 3000});
           this.patientService.storePatientData(res['token'], res['patient']);
           this.router.navigateByUrl('profile');
+        } else {
+          flashMessagesService.show('Wrong email or password', { cssClass: 'alert-danger', timeout: 3000 });
+          this.router.navigateByUrl('login');
         }
       },
       err => {
         console.log(err);
-        this.router.navigateByUrl('login');
       } 
     )
 
