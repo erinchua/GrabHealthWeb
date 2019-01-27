@@ -394,7 +394,28 @@ router.post("/removeFromQueue", (req, res) => {
     })
 });
 
+router.post("/changeAppointmentStatus", (req, res) => {
+    Patient.findOne({nric: req.body.nric }, (err, patient) => {
+        if(err)
+            return res.json({success:false, msg: 'err'});
+        if(patient){
+            Appointment.findOne({patient: patient._id, clinic: req.body.clinic, status: 'Accepted'}, (err2, appointment) => {
+                if(err2)
+                    return res.json({success:false, msg: 'err2'});
+                if(appointment){
+                    appointment.date = req.body.date;
+                    appointment.status = "Completed";
+                    appointment.save();
+                    return res.json({success:true, msg: 'Updated appointment status'});
 
+                }
+            });
+        } else {
+            return res.json({success:false, msg: 'Patient cannot be found'});
+
+        }
+    });
+});
 // // Generate payment details
 // router.post('/getPayment', (req, res) => {
 //     console.log(req.body);
