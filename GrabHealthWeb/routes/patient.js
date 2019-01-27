@@ -11,6 +11,7 @@ const Appointment = require('../models/appointment');
 const axios = require('axios');
 const Nexmo = require('nexmo');
 const password = require('secure-random-password');
+const bcrypt = require('bcryptjs');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
@@ -297,10 +298,51 @@ router.get('/getVisitHistory', passport.authenticate('jwt', {session: false}), (
         });
 });
 
+//Forget Password
+router.post('/forgetPassword', (req, res) => {
+
+    let contactNo = req.body.contactNo;
+    Patient.getPatientByEmail(req.body.email, (err, getPatient) => {
+        if (err) {
+            console.log("getPatient Error");
+        } else {
+            if (getPatient){
+                var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
+                    if (err) {
+                        console.log("Send message error");
+                    } else {
+                        const from = 'GrabHealth';
+                        const to = '65' + contactNo;
+                        const text = randomPassword;
+
+                        nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
+                            if (err) {
+                                console.log(err); 
+                            } else {
+                                if (sendMessage) {
+                                    bcrypt.genSalt(10, (err, salt) => {
+                                        bcrypt.hash(randomPassword, salt, (err, hash) =>{
+                                            if(err) throw err;
+                                            getPatient.password = hash;
+                                            getPatient.save();
+                                            console.log("Message sent");
+                                            return res.json({success: true, msg: "Password have been reset"});
+                                        });
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    })
+});
+
 //Patient Change Password
 router.post('/changePassword', passport.authenticate('jwt', {session: false}), (req, res) => {
 
-    console.log(req.user.contactNo);
     let contactNo = req.body.contactNo;
     Patient.getPatientById(req.user._id, (err, getPatient) => {
         if (err) {
@@ -313,10 +355,30 @@ router.post('/changePassword', passport.authenticate('jwt', {session: false}), (
                         console.log("Send message error");
                     } else {
                         const from = 'GrabHealth';
-                        const to = contactNo;
+                        const to = '65' + contactNo;
                         const text = randomPassword;
 
-                        nexmo.message.sendSms(from, to, text);
+                        nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
+                            if (err) {
+                                console.log("Failed to send message"); 
+                                return res.json({success: false, msg: "Failed to send message"});
+                            } else {
+                                console.log("tesing1");
+                                if (sendMessage) {
+                                    console.log("testing2");
+                                    bcrypt.genSalt(10, (err, salt) => {
+                                        bcrypt.hash(randomPassword, salt, (err, hash) =>{
+                                            if(err) throw err;
+                                            //set hashed random password as password in database
+                                            req.user.password = hash;
+                                            req.user.save();
+                                            console.log("Message sent");
+                                            //return res.json({success: true, msg: "Password have been reset"});
+                                        });
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -324,24 +386,5 @@ router.post('/changePassword', passport.authenticate('jwt', {session: false}), (
     })
 });
 
-//Forget Password
-// router.post('/forgetPassword', (req, res) => {
-//     let contactNo = req.body.contactNo;
-//     let nric = req.body.nric;
-//     console.log(contactNo);
-//     console.log(nric);
-//     nexmo.verify.request({number: contactNo}, (err, result) => {
-//         if (err) {
-//             console.log("Error");
-//         } else {
-//             let requestId = result.requestId;
-//             if (result.status == '0'){
-//                 res.render('verify', {requestId: requestId});
-//             } else {
-//                 res.status(401).send(result.error_text);
-//             }
-//         }
-//     });
-// });
 
 module.exports = router;

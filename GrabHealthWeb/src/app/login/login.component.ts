@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PatientService } from '../services/patient.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
 
 @Component({
   selector: 'app-login',
@@ -12,27 +13,28 @@ export class LoginComponent implements OnInit {
 
   loginForm = new FormGroup({
     email: new FormControl('email'),
-    password: new FormControl('password')
+    password: new FormControl('password'),
   });
 
-  // enterDetailsForm = new FormGroup({
-  //   nric: new FormControl('nric'),
-  //   contactNo: new FormControl('contactNo')
-  // })
+  changeForm = new FormGroup({
+    email: new FormControl('email'),
+    contactNo: new FormControl('contactNo')
+  });
   
   submitted = false;
   success = false;
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private patientService : PatientService) { 
+  constructor(private formBuilder: FormBuilder, private router: Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) { 
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
 
-    // this.enterDetailsForm = this.formBuilder.group({
-    //   nric: ['', Validators.required],
-    //   contactNo: ['', Validators.required]
-    // });
+    this.changeForm = this.formBuilder.group({
+      email: ['', Validators.required],
+      contactNo: ['', Validators.required]
+    });
+
   }
 
   onSubmit(){
@@ -60,7 +62,28 @@ export class LoginComponent implements OnInit {
   }
 
   forgetPassword(){
+    this.submitted = true;
 
+    var flashMessagesService = this.flashMessagesService;
+
+    if(this.changeForm.invalid){
+      return;
+    }
+    
+    this.patientService.forgetPassword(this.changeForm.value).subscribe(
+      res => {
+        console.log(res);
+        if (res['success']){
+          flashMessagesService.show('Message is sent', { cssClass: 'alert-success', timeout: 3000});
+        } else {
+          flashMessagesService.show('Failed to send message', { cssClass: 'alert-danger', timeout: 3000 });
+        }
+      }, 
+      err => {
+        console.log(err);
+      });
+
+      this.success = true;
   }
 
   ngOnInit() {

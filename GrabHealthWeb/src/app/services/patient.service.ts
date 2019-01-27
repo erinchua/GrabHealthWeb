@@ -109,9 +109,7 @@ export class PatientService {
 
     //Forget Password
     forgetPassword(patient){
-        return this.http.post(this.url + '/patient/forgetPassword', patient, {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
-        })}); 
+        return this.http.post(this.url + '/patient/forgetPassword', patient); 
     }
 
 }
