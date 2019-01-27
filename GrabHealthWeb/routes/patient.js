@@ -12,6 +12,7 @@ const axios = require('axios');
 const Nexmo = require('nexmo');
 const password = require('secure-random-password');
 const bcrypt = require('bcryptjs');
+const BlackList = require('../models/blacklist');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
@@ -24,6 +25,30 @@ const nexmo = new Nexmo({
     apiSecret: 'SBf911A5UR6GSOlb'
 });
 
+isNotBlackListedToken = function(req, res, next){
+    BlackList.findOne({'token': req.headers.authorization}, (err, token) => {
+        if(token){
+            res.json({success: false, unauthenticated: true, msg: "Blacklisted token!"})
+        } else {
+            next();
+        }
+    });
+}
+
+//Blacklist Token
+router.post('/blacklistToken', passport.authenticate('jwt', {session:false}), (req, res) => {
+    console.log(req.headers.authorization);
+    let token = new BlackList({
+        token : req.headers.authorization
+    });
+    BlackList.addToken(token, (err2, token) => {
+        if(err2)
+            return res.json({success: false, msg: "Token already blacklisted"});
+        if(token)
+            return res.json({success: true, msg:"Token blacklisted"});
+    });
+
+});
 //Register
 router.post('/register', (req, res, next) => {
     let newPatient = new Patient({
@@ -120,7 +145,7 @@ router.post('/authenticate', (req, res, next) => {
 });
 
 //Profile
-router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+router.get('/profile', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res, next) => {
     res.json({patient: req.user});
 });
 
@@ -143,7 +168,7 @@ router.get('/getClinic', (req, res) => {
 });
 
 //Book Clinic
-router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/bookClinic', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     PendingList.findOne({clinic: req.body._id}, (err, pendingList) => {
         if (err){
             return res.json({success: false, msg: "Error"});
@@ -227,7 +252,7 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
 });
 
 //Edit Patient Details
-router.post('/editPatientDetail', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/editPatientDetail', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Patient.findByIdAndUpdate(req.user._id, {contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
         if (err) {
             res.json({success: false, msg: "Error"});
@@ -238,7 +263,7 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 });
 
 //Get Patient's Booked Clinic
-router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.get('/getBookedClinic', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Appointment.find({patient: req.user._id})
         .populate({path: 'patient', select: 'queueNo'})
         .exec(function (err, appointments){
@@ -247,7 +272,7 @@ router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (
 });
 
 //Cancel Patient's Booking
-router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/cancelBooking', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Appointment.findOne({patient: req.user._id, $or: [{status: 'Pending'}, {status: 'Accepted'}]}, (err, appointment) => {
         if (err) {
             console.log("Appointment Error");
@@ -290,7 +315,7 @@ router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (r
 });
 
 //Get Patient's Visit History
-router.get('/getVisitHistory', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.get('/getVisitHistory', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Appointment.find({patient: req.user._id})
         .populate({path: 'clinic', select: 'name'})
         .exec(function (err, appointments){
@@ -341,7 +366,7 @@ router.post('/forgetPassword', (req, res) => {
 });
 
 //Patient Change Password
-router.post('/changePassword', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/changePassword', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
 
     let contactNo = req.body.contactNo;
     Patient.getPatientById(req.user._id, (err, getPatient) => {
