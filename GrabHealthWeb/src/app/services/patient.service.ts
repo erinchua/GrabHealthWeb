@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 @Injectable()
 export class PatientService {
 
     authToken: any;
     patient: any;
 
-    constructor(private http: HttpClient, public jwtHelperService : JwtHelperService) {}
+    constructor(private http: HttpClient, public jwtHelperService : JwtHelperService, private router: Router) {}
     url =  environment.webserverurl;
     registerPatient(patient){
         let headers = new HttpHeaders();
@@ -28,27 +29,54 @@ export class PatientService {
         headers.append('Authorization', this.authToken);
         headers.append('Content-Type', 'application/json');
         return this.http.get(this.url + '/patient/profile', {headers : new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token"),
+            'Authorization': sessionStorage.getItem("id_token"),
             'Content-Type': 'application/json'
         })});
     }
 
     storePatientData(token, patient){
-        localStorage.setItem('id_token', token);
-        localStorage.setItem('patient', JSON.stringify(patient));
+        sessionStorage.setItem('id_token', token);
+        sessionStorage.setItem('patient', JSON.stringify(patient));
         this.authToken = token;
         this.patient = patient;
     }
 
     loadToken(){
-        const token = localStorage.getItem('id_token');
+        const token = sessionStorage.getItem('id_token');
         this.authToken = token;
     }
-    
+
+    getUserPayload(){
+        var token = sessionStorage.getItem('id_token');
+        if (token){
+            return token;
+        } else 
+            return null;
+    }
+    deleteToken(){
+        sessionStorage.clear();
+    }
+
     logout(){
-        this.authToken = null;
-        this.patient = null;
-        localStorage.clear();
+        var userPayload = this.getUserPayload();
+        var authHeader = { headers: new HttpHeaders({"Authorization":  this.getUserPayload()}) };
+        if (userPayload) {
+            if (!this.jwtHelperService.isTokenExpired(userPayload)){
+                return this.http.post(this.url + '/patient/blacklistToken', "Nothing", authHeader).subscribe(
+                    res=>{
+                        this.deleteToken();
+                        this.router.navigateByUrl('/login');
+                    });
+            } else {
+                this.deleteToken();
+                this.router.navigateByUrl('/login');
+
+            }
+        } else {
+            this.deleteToken();
+            this.router.navigateByUrl('/login');
+
+        }
     }
 
     loggedIn(){
@@ -68,49 +96,49 @@ export class PatientService {
     //Book Clinic
     bookClinics(clinic){
         return this.http.post(this.url + '/patient/bookClinic', clinic, {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })});
     }
 
     //Edit Patient's Profile
     editPatientDetails(patient){
         return this.http.post(this.url + '/patient/editPatientDetail', patient, {headers : new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })});    
     }
 
     //Get Patient's Appointment
     getBookedClinics(){
         return this.http.get(this.url + '/patient/getBookedClinic', {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })});
     }
 
     //Cancel Patient's Booking
     cancelBookings(clinic){
         return this.http.post(this.url + '/patient/cancelBooking', clinic, {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })});    
     }
 
     //Get Patient's Visit History
     getVisitHistory(){
         return this.http.get(this.url + '/patient/getVisitHistory', {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })});
     }
 
     //Change Patient's Password
     changePassword(patient){
         return this.http.post(this.url + '/patient/changePassword', patient, {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })}); 
     }
 
     //Forget Password
     forgetPassword(patient){
         return this.http.post(this.url + '/patient/forgetPassword', patient, {headers: new HttpHeaders({
-            'Authorization': localStorage.getItem("id_token")
+            'Authorization': sessionStorage.getItem("id_token")
         })}); 
     }
 
