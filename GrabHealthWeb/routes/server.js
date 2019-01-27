@@ -431,6 +431,7 @@ router.post("/removeFromQueue", (req, res) => {
     })
 });
 
+
 router.post("/changeAppointmentStatus", (req, res) => {
     Patient.findOne({nric: req.body.nric }, (err, patient) => {
         if(err)
@@ -453,34 +454,6 @@ router.post("/changeAppointmentStatus", (req, res) => {
         }
     });
 });
-// // Generate payment details
-// router.post('/getPayment', (req, res) => {
-//     console.log(req.body);
-//     Appointment.findOne({nric: req.body.nric}), (err, patientExist) => {
-//         if(err){
-//             return res.json({success: false, msg: err});
-//         } else {
-//             if(patientExist){
-//                 Payment.find({}).exec(function(err2, payment) {
-//                     if(err2)
-//                         return res.json({success: false, msg: err2}).status(404);
-//                     if(payment) {
-//                         payment.find({clinic: req.body.clinic})   
-//                         .populate({ path: 'payment' })
-//                         .exec(function (err, payment) {
-//                             console.log(payment);
-//                             if(err)
-//                                 return res.send({success: false, msg: err}).status(404);
-//                             return res.send({success: true, 'patients': patients }).status(201);
-//                         })
-//                     }
-//                 });
-//             } else 
-//                 return res.json({success: false, msg: "Payment cannot be created"});        
-//         }
-//     }
-// });
-
 
 
 module.exports = router;
