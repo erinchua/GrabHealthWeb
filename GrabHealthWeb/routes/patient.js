@@ -9,6 +9,9 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Appointment = require('../models/appointment');
 const axios = require('axios');
+const Nexmo = require('nexmo');
+const password = require('secure-random-password');
+const BlackList = require('../models/blacklist');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
@@ -16,6 +19,35 @@ if(process.env.CLINICSERVERURL){
     var webserverurl =  'http://localhost:4560';
 }
 
+const nexmo = new Nexmo({
+    apiKey: 'f831826d',
+    apiSecret: 'SBf911A5UR6GSOlb'
+});
+
+isNotBlackListedToken = function(req, res, next){
+    BlackList.findOne({'token': req.headers.authorization}, (err, token) => {
+        if(token){
+            res.json({success: false, unauthenticated: true, msg: "Blacklisted token!"})
+        } else {
+            next();
+        }
+    });
+}
+
+//Blacklist Token
+router.post('/blacklistToken', passport.authenticate('jwt', {session:false}), (req, res) => {
+    console.log(req.headers.authorization);
+    let token = new BlackList({
+        token : req.headers.authorization
+    });
+    BlackList.addToken(token, (err2, token) => {
+        if(err2)
+            return res.json({success: false, msg: "Token already blacklisted"});
+        if(token)
+            return res.json({success: true, msg:"Token blacklisted"});
+    });
+
+});
 //Register
 router.post('/register', (req, res, next) => {
     let newPatient = new Patient({
@@ -112,7 +144,7 @@ router.post('/authenticate', (req, res, next) => {
 });
 
 //Profile
-router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+router.get('/profile', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res, next) => {
     res.json({patient: req.user});
 });
 
@@ -135,7 +167,7 @@ router.get('/getClinic', (req, res) => {
 });
 
 //Book Clinic
-router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/bookClinic', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     PendingList.findOne({clinic: req.body._id}, (err, pendingList) => {
         if (err){
             return res.json({success: false, msg: "Error"});
@@ -149,48 +181,56 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
                             if(queueErr)
                                 console.log(err)
                             if(!foundPatientInQueue){
-                                pendingList.patients.push(req.user._id);
-                                Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
-                                    if(err)
-                                        console.log(err);
-                                    if(!patientWithClinic){
-                                        Patient.findById(req.user._id,(err, patient) => {
+                                Appointment.findOne({patient: req.user._id, clinic: pendingList.clinic, status: 'Accepted' }, (appointmentErr, appointment) => {
+                                    if(appointmentErr)
+                                        console.log(appointmentErr);
+                                    if(!appointment){
+                                        pendingList.patients.push(req.user._id);
+                                        Patient.findOne({_id: req.user._id, clinics: {$all: [pendingList.clinic]}}, (err, patientWithClinic) =>{
                                             if(err)
-                                                console.log(err)
-                                            if(patient){
-                                                patient.clinics.push(pendingList.clinic);
-                                                patient.save();
-                                            }
-                                        })
-                                    }
-                                });
-                                pendingList.save(function (e2, checking2) {
-                                    if (e2) {
-                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
-                                    } 
-                                    else {
-                                        if(checking2){
-                                            let newAppointment = new Appointment({
-                                                patient: req.user._id, 
-                                                clinic: req.body._id,
-                                                clinicName: req.body
-                                            });
-                                            Appointment.addAppointment(newAppointment, (err, appointment) => {
-                                                if (err) {
-                                                    return res.json({success: false, msg: "Patient already exists in pendingList"});
-                                                } else {
-                                                    if (appointment){
-                                                        Appointment.find({})
-                                                        .populate({path: 'clinicName', select: '_id: 0, name'})
-                                                        .exec(function (err, appointments){
-                                                            return res.json({success: true, msg: "Successfully booked"});
-                                                        }) 
-                                                    } else {
-                                                        return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                console.log(err);
+                                            if(!patientWithClinic){
+                                                Patient.findById(req.user._id,(err, patient) => {
+                                                    if(err)
+                                                        console.log(err)
+                                                    if(patient){
+                                                        patient.clinics.push(pendingList.clinic);
+                                                        patient.save();
                                                     }
+                                                })
+                                            }
+                                        });
+                                        pendingList.save(function (e2, checking2) {
+                                            if (e2) {
+                                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                            } 
+                                            else {
+                                                if(checking2){
+                                                    let newAppointment = new Appointment({
+                                                        patient: req.user._id, 
+                                                        clinic: req.body._id,
+                                                        clinicName: req.body
+                                                    });
+                                                    Appointment.addAppointment(newAppointment, (err, appointment) => {
+                                                        if (err) {
+                                                            return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                        } else {
+                                                            if (appointment){
+                                                                Appointment.find({})
+                                                                .populate({path: 'clinicName', select: '_id: 0, name'})
+                                                                .exec(function (err, appointments){
+                                                                    return res.json({success: true, msg: "Successfully booked"});
+                                                                }) 
+                                                            } else {
+                                                                return res.json({success: false, msg: "Patient already exists in pendingList"});
+                                                            }
+                                                        }
+                                                    });
                                                 }
-                                            });
-                                        }
+                                            }
+                                        });
+                                    } else {
+                                        return res.json({success: false, msg: "Appointment not completed. Please complete your payment or cancel the appointment!"});
                                     }
                                 });
                             } else {
@@ -211,8 +251,8 @@ router.post('/bookClinic', passport.authenticate('jwt', {session: false}), (req,
 });
 
 //Edit Patient Details
-router.post('/editPatientDetail', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password, contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
+router.post('/editPatientDetail', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
+    Patient.findByIdAndUpdate(req.user._id, {contactNo: req.body.contactNo, address: req.body.address}, {upsert:true}, (err, patient) => {
         if (err) {
             res.json({success: false, msg: "Error"});
         } else {
@@ -222,7 +262,7 @@ router.post('/editPatientDetail', passport.authenticate('jwt', {session: false})
 });
 
 //Get Patient's Booked Clinic
-router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.get('/getBookedClinic', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Appointment.find({patient: req.user._id})
         .populate({path: 'patient', select: 'queueNo'})
         .exec(function (err, appointments){
@@ -231,7 +271,7 @@ router.get('/getBookedClinic', passport.authenticate('jwt', {session: false}), (
 });
 
 //Cancel Patient's Booking
-router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (req, res) => {
+router.post('/cancelBooking', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
     Appointment.findOne({patient: req.user._id, $or: [{status: 'Pending'}, {status: 'Accepted'}]}, (err, appointment) => {
         if (err) {
             console.log("Appointment Error");
@@ -272,5 +312,61 @@ router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (r
         }
     });
 });
+
+//Get Patient's Visit History
+router.get('/getVisitHistory', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
+    Appointment.find({patient: req.user._id})
+        .populate({path: 'clinic', select: 'name'})
+        .exec(function (err, appointments){
+            res.send({'appointments': appointments}).status(201);
+        });
+});
+
+//Patient Change Password
+router.post('/changePassword', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
+
+    console.log(req.user.contactNo);
+    let contactNo = req.body.contactNo;
+    Patient.getPatientById(req.user._id, (err, getPatient) => {
+        if (err) {
+            console.log("getPatient Error");
+        } else {
+            if (getPatient){
+                var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
+                    if (err) {
+                        console.log("Send message error");
+                    } else {
+                        const from = 'GrabHealth';
+                        const to = contactNo;
+                        const text = randomPassword;
+
+                        nexmo.message.sendSms(from, to, text);
+                    }
+                });
+            }
+        }
+    })
+});
+
+//Forget Password
+// router.post('/forgetPassword', (req, res) => {
+//     let contactNo = req.body.contactNo;
+//     let nric = req.body.nric;
+//     console.log(contactNo);
+//     console.log(nric);
+//     nexmo.verify.request({number: contactNo}, (err, result) => {
+//         if (err) {
+//             console.log("Error");
+//         } else {
+//             let requestId = result.requestId;
+//             if (result.status == '0'){
+//                 res.render('verify', {requestId: requestId});
+//             } else {
+//                 res.status(401).send(result.error_text);
+//             }
+//         }
+//     });
+// });
 
 module.exports = router;

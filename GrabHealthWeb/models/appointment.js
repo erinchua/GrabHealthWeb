@@ -20,12 +20,10 @@ const AppointmentSchema = mongoose.Schema({
         default: 'Pending'
     },
     date: {
-        type: Schema.Types.ObjectId,
-        ref: 'Payment'
+        type: String
     },
     billedAmount: {
-        type: Schema.Types.ObjectId,
-        ref: 'Payment'
+        type: Number
     },
     remarks: {
         type: String

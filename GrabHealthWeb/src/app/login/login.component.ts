@@ -14,6 +14,11 @@ export class LoginComponent implements OnInit {
     email: new FormControl('email'),
     password: new FormControl('password')
   });
+
+  // enterDetailsForm = new FormGroup({
+  //   nric: new FormControl('nric'),
+  //   contactNo: new FormControl('contactNo')
+  // })
   
   submitted = false;
   success = false;
@@ -22,7 +27,12 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required]
-    })
+    });
+
+    // this.enterDetailsForm = this.formBuilder.group({
+    //   nric: ['', Validators.required],
+    //   contactNo: ['', Validators.required]
+    // });
   }
 
   onSubmit(){
@@ -46,6 +56,10 @@ export class LoginComponent implements OnInit {
     )
 
     this.success = true;
+
+  }
+
+  forgetPassword(){
 
   }
 
