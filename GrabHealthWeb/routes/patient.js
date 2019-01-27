@@ -9,12 +9,19 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const Appointment = require('../models/appointment');
 const axios = require('axios');
+const Nexmo = require('nexmo');
+const password = require('secure-random-password');
 
 if(process.env.CLINICSERVERURL){
     var webserverurl = process.env.CLINICSERVERURL;
 } else {
     var webserverurl =  'http://localhost:4560';
 }
+
+const nexmo = new Nexmo({
+    apiKey: 'f831826d',
+    apiSecret: 'SBf911A5UR6GSOlb'
+});
 
 //Register
 router.post('/register', (req, res, next) => {
@@ -284,13 +291,29 @@ router.post('/cancelBooking', passport.authenticate('jwt', {session: false}), (r
 
 //Patient Change Password
 router.post('/changePassword', passport.authenticate('jwt', {session: false}), (req, res) => {
-    Patient.findByIdAndUpdate(req.user._id, {password: req.body.password}, {upsert:true}, (err, patient) => {
+
+    console.log(req.user.contactNo);
+    let contactNo = req.body.contactNo;
+    Patient.getPatientById(req.user._id, (err, getPatient) => {
         if (err) {
-            res.json({success: false, msg: "Error"});
+            console.log("getPatient Error");
         } else {
-            res.json({success: true, msg: "Password have been changed"});
+            if (getPatient){
+                var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
+                    if (err) {
+                        console.log("Send message error");
+                    } else {
+                        const from = 'GrabHealth';
+                        const to = contactNo;
+                        const text = randomPassword;
+
+                        nexmo.message.sendSms(from, to, text);
+                    }
+                });
+            }
         }
-    });
+    })
 });
 
 //Forget Password
