@@ -97,7 +97,7 @@
         <div class="modal-body">
           <div class="row rowspacing">
             <div class="col">
-              <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+              <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
                 <div class="form-group">
                   <label for="password">Old Password:</label>
                   <input type = "password" class="form-control" id="password" formControlName = "password" [(ngModel)]="patient.password" value="{{patient.password}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.password.errors }">

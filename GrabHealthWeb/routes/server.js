@@ -9,23 +9,6 @@ const password = require('secure-random-password');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 
-/*const Nexmo = require('nexmo');
-const nexmo = new Nexmo({
-  apiKey: '53bbc906',
-  apiSecret: 'e9sA3XAWOEZnsZd5'
-});
-
-nexmo.message.sendSms(
-    'Nexmo', '6590189969', 'test',
-    (err, responseData) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.dir(responseData);
-        }
-    }
-);*/
-
 var transporter = nodemailer.createTransport(smtpTransport({
     service: 'gmail',
     auth: {
