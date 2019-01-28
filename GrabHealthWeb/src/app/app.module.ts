@@ -13,7 +13,6 @@ import { PatientComponent } from './patient/patient.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from './login/login.component';
 
-import { IssueService } from './issue.service';
 import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { FindClinicComponent } from './find-clinic/find-clinic.component';
@@ -29,7 +28,7 @@ import { RecaptchaModule } from 'ng-recaptcha';
 import { RecaptchaFormsModule } from 'ng-recaptcha/forms';
 
 export function getToken(): string {
-  return localStorage.getItem('id_token');
+  return sessionStorage.getItem('id_token');
 }
 
 @NgModule({
@@ -64,7 +63,7 @@ export function getToken(): string {
     FormsModule,
     FlashMessagesModule.forRoot()
   ],
-  providers: [IssueService, PatientService, AuthGuard],
+  providers: [PatientService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
