@@ -333,25 +333,11 @@ router.post('/forgetPassword', (req, res) => {
         } else {
             if (getPatient){
                 var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
-                let requestId = null;
-                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, requestResult) => {
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, send) => {
                     if (err) {
                         console.log("Send message error");
                     } else {
-                        requestId = requestResult.requestId;
-                        if (requestResult.status == '0'){
-                            res.render('verify', {requestId : requestId});
-                        } else {
-                            return res.json({success: false, msg: "Failed to send message"});
-                        }
-                    }
-                });
-
-                nexmo.verify.check({request_id : req.body.requestId, code: req.body.pin}, (err, checkResult) => {
-                    if (err) {
-                        console.log("Send message error2");
-                    } else {
-                        if (checkResult && requestResult.status == '0'){
+                        if (send){
                             const from = 'GrabHealth';
                             const to = '65' + contactNo;
                             const text = randomPassword;
@@ -377,7 +363,7 @@ router.post('/forgetPassword', (req, res) => {
                             return res.json({success: false, msg: "Failed to send message"});
                         }
                     }
-                })
+                });
             }
         }
     });

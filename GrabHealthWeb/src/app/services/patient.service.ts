@@ -80,8 +80,9 @@ export class PatientService {
     }
 
     loggedIn(){
-        if (this.loadToken) {
-            if (!this.jwtHelperService.isTokenExpired(this.authToken))
+        var userPayload = this.getUserPayload();
+        if (userPayload) {
+            if (!this.jwtHelperService.isTokenExpired(userPayload))
                 return true;
         } else {
             return false;
