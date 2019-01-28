@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { IssueService } from '../issue.service';
 
 @Component({
   selector: 'app-home',
@@ -8,12 +7,10 @@ import { IssueService } from '../issue.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private issueService: IssueService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.issueService.getIssues().subscribe((issues) => {
-      console.log(issues);
-    });
+    
   }
 
 }
