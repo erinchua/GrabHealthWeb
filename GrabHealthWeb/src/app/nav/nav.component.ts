@@ -18,7 +18,6 @@ export class NavComponent implements OnInit {
 
   onLogoutClick(){
     this.patientService.logout();
-    this.router.navigateByUrl('login');
   }
 
 
