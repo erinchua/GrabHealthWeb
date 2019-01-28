@@ -50,7 +50,7 @@ let PatientSchema = new Schema({
     queueNo: {
         type: Number,
         required: true,
-        default: 1
+        default: 0
     },
     clinics: [{
         type: Schema.Types.ObjectId,

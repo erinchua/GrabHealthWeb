@@ -5,7 +5,7 @@ const QueueSchema = mongoose.Schema({
     queueNo: {
         type: Number,
         required: true,
-        default: 1
+        default: 0
     },
     clinic: {
         type: Schema.Types.ObjectId,
