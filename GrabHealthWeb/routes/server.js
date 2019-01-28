@@ -417,8 +417,8 @@ router.post("/removeFromQueue", (req, res) => {
     })
 });
 
-
-router.post("/changeAppointmentStatus", (req, res) => {
+//Complete payment
+router.post("/completeAppointment", (req, res) => {
     Patient.findOne({nric: req.body.nric }, (err, patient) => {
         if(err)
             return res.json({success:false, msg: 'err'});
@@ -427,6 +427,7 @@ router.post("/changeAppointmentStatus", (req, res) => {
                 if(err2)
                     return res.json({success:false, msg: 'err2'});
                 if(appointment){
+                    appointment.billedAmount = req.body.billedAmount;
                     appointment.date = req.body.date;
                     appointment.status = "Completed";
                     appointment.save();
