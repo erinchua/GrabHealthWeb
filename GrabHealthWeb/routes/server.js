@@ -9,23 +9,6 @@ const password = require('secure-random-password');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 
-/*const Nexmo = require('nexmo');
-const nexmo = new Nexmo({
-  apiKey: '53bbc906',
-  apiSecret: 'e9sA3XAWOEZnsZd5'
-});
-
-nexmo.message.sendSms(
-    'Nexmo', '6590189969', 'test',
-    (err, responseData) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.dir(responseData);
-        }
-    }
-);*/
-
 var transporter = nodemailer.createTransport(smtpTransport({
     service: 'gmail',
     auth: {
@@ -396,13 +379,16 @@ router.post('/rejectAppointmentRequest', (req, res) => {
 
 //get current patient
 router.get("/current-patient", (req, res) => {
-    Queue.findOne({ "clinic": req.body.clinic, "patients": { $all: [patient._id] }}).exec(function (err, patients) {
+    Queue.findOne({ "clinic": req.body.clinic, "patients": { $all: [patient._id] }}).exec(function (err, queue) {
         if (err)
-            res.send({ success: false, msg: err }).status(404);
-        if (patients)
-            res.send({ success: false, msg: 'patient is the current' }).status(404);
-        else
-            res.send({ success: true, 'patients': patients }).status(201);
+            return res.send({ success: false, msg: err }).status(404);
+        if (queue)
+            return res.send({ success: false, msg: 'patient is the current' }).status(404);
+        else{
+            console.log(queue);
+            return res.send({ success: true, 'patients': queue.patients[0] }).status(201);
+
+        }
     });
 });
 

@@ -19,6 +19,9 @@ export class EditProfileComponent implements OnInit {
   });
 
   patient:Object;
+  password: any;
+  newPassword: any;
+  confirmPassword: any;
 
   constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService, private formBuilder: FormBuilder) {
     this.changePasswordForm = this.formBuilder.group({
