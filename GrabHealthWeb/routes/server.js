@@ -317,7 +317,7 @@ router.post('/acceptAppointmentRequest', (req, res) => {
                                                     if(err)
                                                         console.log('Cannot show in appointment status');
                                                     if(appointmentFound){
-                                                        appointmentFound.billAmount = req.body.billAmount;
+                                                        appointmentFound.billedAmount = req.body.billedAmount;
                                                         appointmentFound.status = 'Accepted';
                                                         appointmentFound.remarks = req.body.remarks;
                                                         appointmentFound.save();
