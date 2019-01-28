@@ -404,5 +404,4 @@ router.post('/changePassword', [passport.authenticate('jwt', {session: false}), 
     });
 });
 
-
 module.exports = router;
