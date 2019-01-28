@@ -14,7 +14,7 @@ const password = require('secure-random-password');
 const bcrypt = require('bcryptjs');
 const BlackList = require('../models/blacklist');
 
-var webserverurl = process.env.CLINICSERVERURL | 'http://localhost:4560';
+var webserverurl = process.env.CLINICSERVERURL || 'http://localhost:4560';
 
 
 const nexmo = new Nexmo({
