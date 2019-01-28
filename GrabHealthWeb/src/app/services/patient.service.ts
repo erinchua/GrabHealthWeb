@@ -140,8 +140,4 @@ export class PatientService {
         return this.http.post(this.url + '/patient/forgetPassword', patient); 
     }
 
-    verify(patient){
-        return this.http.post(this.url + '/patient/verify', patient); 
-    }
-
 }

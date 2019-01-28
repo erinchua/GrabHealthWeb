@@ -323,20 +323,6 @@ router.get('/getVisitHistory', [passport.authenticate('jwt', {session: false}), 
         });
 });
 
-//Verify Patient for Forget Password
-router.post('/verify', (req, res) => {
-    let contactNo = req.body.contactNo
-    Patient.getPatientByEmail(req.body.email, (err, getPatient) => {
-        if (err) {
-            console.log("Error getting patient");
-        } else {
-            if (getPatient){
-                
-            }
-        }
-    });
-});
-
 //Forget Password
 router.post('/forgetPassword', (req, res) => {
 
