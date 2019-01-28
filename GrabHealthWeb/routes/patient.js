@@ -13,6 +13,7 @@ const Nexmo = require('nexmo');
 const password = require('secure-random-password');
 const bcrypt = require('bcryptjs');
 const BlackList = require('../models/blacklist');
+const env_config = require('dotenv').config();
 
 var webserverurl = process.env.CLINICSERVERURL || 'http://localhost:4560';
 
