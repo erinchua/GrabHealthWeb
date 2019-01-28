@@ -17,6 +17,7 @@
           <th scope="col">Clinic Name</th>
           <th scope="col">Booking Status</th>
           <th scope="col">Remarks</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody *ngFor="let appointment of appointments">
@@ -24,6 +25,7 @@
           <td>{{ appointment.patient.queueNo }}</td>
           <td>{{ appointment.clinicName.name }}</td>
           <td>{{ appointment.status }}</td>
+          <td>{{ appointment.remarks }}</td>
           <td><button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#cancelModal" *ngIf="appointment.status === 'Pending' || appointment.status === 'Accepted'"><i class="fa fa-times-circle"></i> Cancel</button></td>
         </tr>
       </tbody>
