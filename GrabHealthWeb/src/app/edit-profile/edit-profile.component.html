@@ -94,13 +94,13 @@
           </button>
         </div>
         
-        <div class="modal-body">
+        <div class="modal-body" *ngIf="patient">
           <div class="row rowspacing">
             <div class="col">
-              <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+              <form [formGroup]="changePasswordForm">
                 <div class="form-group">
                   <label for="password">Old Password:</label>
-                  <input type = "password" class="form-control" id="password" formControlName = "password" [(ngModel)]="patient.password" value="{{patient.password}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.password.errors }">
+                  <input type = "password" class="form-control" id="password" formControlName = "password" [(ngModel)]="patient.password" value="{{patient.password}}" onfocus=" this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.password.errors }">
                     <div *ngIf="submitted && changePasswordForm.controls.password.errors" class="invalid-feedback">
                         <div *ngIf="changePasswordForm.controls.password.errors.required">Required!</div>
                     </div>  
@@ -108,7 +108,7 @@
 
                 <div class="form-group">
                   <label for="newPassword">New Password:</label>
-                  <input type = "password" class="form-control" id="newPassword" formControlName = "newPassword" value="{{patient.newPassword}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.newPassword.errors }">
+                  <input type = "password" class="form-control" id="newPassword" formControlName = "newPassword" value="{{patient.newPassword}}" onfocus=" this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.newPassword.errors }">
                     <div *ngIf="submitted && changePasswordForm.controls.newPassword.errors" class="invalid-feedback">
                       <div *ngIf="changePasswordForm.controls.newPassword.errors.required">Required!</div>
                     </div>
