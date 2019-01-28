@@ -22,7 +22,7 @@
         <tr *ngFor="let appointment of appointments">
           <td>{{appointment.date | date: 'dd/MM/yyyy'}}</td>
           <td>{{appointment.clinic.name}}</td>
-          <td>{{appointment.billedAmount}}</td>
+          <td>{{appointment.billedAmount | number: '1.2-2'}}</td>
         </tr>
       </tbody>
     </table>
