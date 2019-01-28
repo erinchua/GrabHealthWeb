@@ -14,10 +14,15 @@ const env_config = require('dotenv').config();
 const bodyCleaner = require('express-body-cleaner');
 var fs = require('fs');
 var https = require('https');
-var rp = require('request-promise');
-
-// const Nexmo = require('nexmo');
+const Nexmo = require('nexmo');
 // const socketio = require('socket.io');
+
+const nexmo = new Nexmo({
+    apiKey: 'f831826d',
+    apiSecret: 'SBf911A5UR6GSOlb'
+});
+
+
 const internalServer = express();
 const appPort = 60003;
 internalServer.use(helmet());
@@ -46,7 +51,7 @@ app.use(function(req, res, next) {
     });
     
 
-app.use(express.static(path.join(__dirname, 'src')));
+//app.use(express.static(path.join(__dirname, 'src')));
 
 //Body Parser Middleware
 app.use(bodyParser.json());
@@ -61,27 +66,14 @@ require('./config/passport')(passport);
 
 app.use('/patient', patient);
 
+
 //External Server
-app.use('/GrabHealthWeb', ExtServer);
+if (process.env.HTTPS) {
+    //Don't allow server with portforwarding to access internal routes
+} else {
+    app.use('/GrabHealthWeb', ExtServer);
 
-// const secret = '6Ld1WYwUAAAAAOe921Pih1D4_It-54M6pxnS6djT';
-
-// app.get('/validate_captcha', (req, res) => {
-//     const options = {
-//         method: 'POST',
-//         uri: 'https://www.google.com/recaptcha/api/siteverify',
-//         qs: {
-//             secret,
-//             response: req.query.token
-//         },
-//         json : true
-//     };
-
-//     rp(options)
-//         .then(response => res.json(response))
-//         .catch(() => {});
-// });
-
+}
 
 mongoose.connect(config.database, {useNewUrlParser: true, useCreateIndex: true });
 mongoose.Promise = global.Promise;
@@ -156,7 +148,11 @@ router.route('/issues/delete/:id').get((req, res) => {
     })
 })
 
+app.get('/', function(req, res){
+    res.redirect('/GrabHealth');
+})
 app.use('/', router);
+
 
 //Serve static files
 app.use('/GrabHealth/', express.static(path.join(__dirname, 'public')));

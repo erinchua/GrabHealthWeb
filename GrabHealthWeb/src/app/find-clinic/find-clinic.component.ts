@@ -20,10 +20,10 @@ export class FindClinicComponent implements OnInit {
   selectSession:any;
   today: number = Date.now();
 
-  sessions = [
-    { name: "Session 1", value: "0900 - 1300" },
-    { name: "Session 2", value: "1400 - 1800" }
-  ];
+  // sessions = [
+  //   { name: "Session 1", value: "0900 - 1300" },
+  //   { name: "Session 2", value: "1400 - 1800" }
+  // ];
 
   constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) {
    }
@@ -54,8 +54,10 @@ export class FindClinicComponent implements OnInit {
         console.log(res);
         if (res['success']){
           flashMessagesService.show('Successfully booked!', { cssClass: 'alert-success', timeout: 3000});
+          this.getClinics();
         } else {
-          flashMessagesService.show('You have already made a booking!', { cssClass: 'alert-danger', timeout: 3000 });
+          flashMessagesService.show(res['msg'], { cssClass: 'alert-danger', timeout: 3000 });
+          this.getClinics();
         }
       }, 
       err => {

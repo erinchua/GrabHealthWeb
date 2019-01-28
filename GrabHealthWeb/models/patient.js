@@ -26,7 +26,7 @@ let PatientSchema = new Schema({
         required: true
     },
     dob: {
-        type: Date,
+        type: String,
         required: true 
     },
     address: {
@@ -36,10 +36,6 @@ let PatientSchema = new Schema({
     nationality: {
         type: String,
         required: true
-    },
-    file: {
-        data: Buffer,
-        contentType: String
     },
     email: {
         type: String,

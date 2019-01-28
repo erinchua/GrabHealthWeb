@@ -23,7 +23,17 @@ export class CustomValidators {
         // compare is the password math
         if (password !== confirmPassword) {
           // if they don't match, set an error in our confirmPassword form control
-          control.get('confirmPassword').setErrors({ NoPassswordMatch: true });
+          control.get('confirmPassword').setErrors({ NoPasswordMatch: true });
+        }
+      }
+
+      static changePasswordMatchValidator(control: AbstractControl) {
+        const newPassword: string = control.get('newPassword').value; // get password from our password form control
+        const confirmPassword: string = control.get('confirmPassword').value; // get password from our confirmPassword form control
+        // compare is the password math
+        if (newPassword !== confirmPassword) {
+          // if they don't match, set an error in our confirmPassword form control
+          control.get('confirmPassword').setErrors({ NoPasswordMatch: true });
         }
       }
 }

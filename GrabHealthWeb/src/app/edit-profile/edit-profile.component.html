@@ -6,15 +6,10 @@
 
   <div class="container float-right" id="rightSide">
     <div class="container col-sm-2 float-left text-center" id="rightInner">
-        <img src="{{patient.file}}" width="150px"/>
         <label>Email:</label>
         <input type="text" class="text-line text-center" [(ngModel)]="patient.email"  value="{{patient.email}}" disabled>
         <br>
-        <label>Password:</label>
-        <input type="password" class="form-control text-line text-center" [(ngModel)]="patient.password" value="{{patient.password}}">
-        <br>
-        <label>Confirm Password:</label>
-        <input type="password" class="form-control text-line text-center" [(ngModel)]="patient.confirmPassword" value="{{patient.confirmPassword}}">
+        <button type="button" class="btn btn-primary" id="changePassword" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
     </div>
     
     <div class="container col-sm-9 float-right" id="rightInner">
@@ -47,3 +42,102 @@
 
   </div>
 </div>
+
+<!--Enter Contact Number Modal Box-->
+<!-- <div>
+  <div class="modal fade" id="enterContactNumberModal" tabindex="-1" role="dialog" aria-labelledby="enterContactNumberModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="enterContactNumberModalTitle"><strong>Enter Contact Number</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row rowspacing">
+            <div class="col">
+              <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                  <label for="contactNo">Contact No.:</label>
+                    <input type = "text" class="form-control" id="contactNo" formControlName = "contactNo" [(ngModel)]="patient.contactNo" value="{{patient.contactNo}}" onfocus="this.value=''"  [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.contactNo.errors }">
+                    <div *ngIf="submitted && changePasswordForm.controls.contactNo.errors" class="invalid-feedback">
+                      <div *ngIf="changePasswordForm.controls.contactNo.errors.required">Required!</div>
+                    </div>
+                </div>
+        
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-secondary" (click)="changePassword()">Submit</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!--End of Enter Contact Number Modal Box-->
+
+
+<!--Change Password Modal Box-->
+<div>
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalTitle"><strong>Change Password</strong></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="row rowspacing">
+            <div class="col">
+              <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                  <label for="password">Old Password:</label>
+                  <input type = "password" class="form-control" id="password" formControlName = "password" [(ngModel)]="patient.password" value="{{patient.password}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.password.errors }">
+                    <div *ngIf="submitted && changePasswordForm.controls.password.errors" class="invalid-feedback">
+                        <div *ngIf="changePasswordForm.controls.password.errors.required">Required!</div>
+                    </div>  
+                </div>
+
+                <div class="form-group">
+                  <label for="newPassword">New Password:</label>
+                  <input type = "password" class="form-control" id="newPassword" formControlName = "newPassword" value="{{patient.newPassword}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.newPassword.errors }">
+                    <div *ngIf="submitted && changePasswordForm.controls.newPassword.errors" class="invalid-feedback">
+                      <div *ngIf="changePasswordForm.controls.newPassword.errors.required">Required!</div>
+                    </div>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength')">Must be at least 8 characters</label>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['newPassword'].hasError('hasNumber')">Must contain at least 1 number</label>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['newPassword'].hasError('hasUpperCase')">Must contain at least 1 Upper Case</label>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['newPassword'].hasError('hasLowerCase')">Must be at least 1 Lower Case</label>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['newPassword'].hasError('hasSpecialCharacters')">Must be at least 1 Special Character</label>            
+                </div>
+          
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm Password:</label>
+                  <input  type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" value="{{patient.confirmPassword}}" onfocus="this.value=''" [ngClass]="{ 'is-invalid': submitted && changePasswordForm.controls.confirmPassword.errors }">
+                    <div *ngIf="submitted && changePasswordForm.controls.confirmPassword.errors" class="invalid-feedback">
+                      <div *ngIf="changePasswordForm.controls.confirmPassword.errors.required">Required!</div>
+                    </div>
+                    <label class="invalid-feedback" *ngIf="changePasswordForm.controls['confirmPassword'].hasError('NoPasswordMatch')">Password do not match</label>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-secondary" (click)="changePassword()" data-dismiss="modal">Submit</button>
+                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End of Change Password Modal Box-->

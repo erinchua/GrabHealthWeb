@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
 import { FlashMessagesService } from 'angular2-flash-messages';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; 
+import { CustomValidators } from '../custom-validators';
 
 @Component({
   selector: 'app-edit-profile',
@@ -10,9 +12,31 @@ import { FlashMessagesService } from 'angular2-flash-messages';
 })
 export class EditProfileComponent implements OnInit {
 
+  changePasswordForm = new FormGroup({
+    password: new FormControl('password'),
+    newPassword: new FormControl('newPassword')
+    //contactNo: new FormControl('contactNo')
+  });
+
   patient:Object;
 
-  constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService) { }
+  constructor(private router : Router, private patientService : PatientService, private flashMessagesService : FlashMessagesService, private formBuilder: FormBuilder) {
+    this.changePasswordForm = this.formBuilder.group({
+      password: ['', Validators.required],
+      newPassword: ['', Validators.compose([Validators.required, 
+                                      CustomValidators.patternValidator(/\d/, { hasNumber: true }),
+                                      CustomValidators.patternValidator(/[A-Z]/, { hasUpperCase: true }),
+                                      CustomValidators.patternValidator(/[a-z]/, { hasLowerCase: true }),
+                                      CustomValidators.patternValidator(/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, { hasSpecialCharacters: true }),
+                                      Validators.minLength(8)])],
+      confirmPassword: ['', Validators.required]
+      //contactNo: ['', Validators.required]
+    },
+    {
+      validator: CustomValidators.changePasswordMatchValidator
+    }
+    );
+  }
 
   ngOnInit() {
     this.patientService.getPatientDetails().subscribe(
@@ -42,6 +66,35 @@ export class EditProfileComponent implements OnInit {
       err => {
         console.log(err);
       });
+  }
+
+  submitted = false;
+  success = false;
+
+  changePassword(){
+
+    this.submitted = true;
+
+    var flashMessagesService = this.flashMessagesService;
+
+    if(this.changePasswordForm.invalid){
+      return;
+    }
+    
+    this.patientService.changePassword(this.changePasswordForm.value).subscribe(
+      res => {
+        console.log(res);
+        if (res['success']){
+          flashMessagesService.show('Password have been changed', { cssClass: 'alert-success', timeout: 3000});
+        } else {
+          flashMessagesService.show('Failed to change password', { cssClass: 'alert-danger', timeout: 3000 });
+        }
+      }, 
+      err => {
+        console.log(err);
+      });
+
+      this.success = true;
   }
 
 

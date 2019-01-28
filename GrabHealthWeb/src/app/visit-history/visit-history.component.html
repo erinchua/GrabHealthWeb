@@ -13,16 +13,16 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Receipt Number</th>
-          <th scope="col">View e-Receipt</th>
+          <th scope="col">Date of Visit</th>
+          <th scope="col">Clinic Name</th>
+          <th scope="col">Billed Amount</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
+        <tr *ngFor="let appointment of appointments">
+          <td>{{appointment.date | date: 'dd/MM/yyyy'}}</td>
+          <td>{{appointment.clinic.name}}</td>
+          <td>{{appointment.billedAmount}}</td>
         </tr>
       </tbody>
     </table>
