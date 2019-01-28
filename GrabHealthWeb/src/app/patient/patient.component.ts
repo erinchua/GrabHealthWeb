@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { CustomValidators } from '../custom-validators';
 import { PatientService } from '../services/patient.service';
 import { Router } from '@angular/router';
+import { FlashMessagesService } from 'angular2-flash-messages';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
@@ -27,7 +28,7 @@ export class PatientComponent implements OnInit {
   submitted = false;
   success = false;
 
-  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router, private http: HttpClient) { 
+  constructor(private formBuilder: FormBuilder, private patientService: PatientService, private router: Router, private http: HttpClient, private flashMessagesService : FlashMessagesService) { 
     this.registrationForm = this.formBuilder.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -54,13 +55,20 @@ export class PatientComponent implements OnInit {
   onSubmit(){
     this.submitted = true;
 
+    var flashMessagesService = this.flashMessagesService;
+
     if(this.registrationForm.invalid){
       return;
     }
     this.patientService.registerPatient(this.registrationForm.value).subscribe(
       res=>{
-        if(res['success'])
+        console.log(res);
+        if(res['success']){
+          flashMessagesService.show('Successfully registered', { cssClass: 'alert-success', timeout: 3000});
           this.router.navigateByUrl('login');
+        } else {
+          flashMessagesService.show('Failed to register', { cssClass: 'alert-danger', timeout: 3000});
+        }
       },
       err=>{
         console.log(err);

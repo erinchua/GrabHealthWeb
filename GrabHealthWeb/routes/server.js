@@ -5,8 +5,9 @@ const PendingList = require("../models/pendinglist");
 const Queue = require("../models/queue");
 const Patient = require("../models/patient");
 const Appointment = require("../models/appointment");
-const database = require("../config/database");
-const axios = require('axios');
+const password = require('secure-random-password');
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 /*const Nexmo = require('nexmo');
 const nexmo = new Nexmo({
@@ -25,6 +26,23 @@ nexmo.message.sendSms(
     }
 );*/
 
+var transporter = nodemailer.createTransport(smtpTransport({
+    service: 'gmail',
+    auth: {
+      user: 'grabhealthteam@gmail.com',
+      pass: 'GrabHealth2018S2ABCE'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+  }));
+  
+var mailOptions = {
+    from: 'grabhealthteam@gmail.com',
+    to: 'Enter recipient email address',
+    subject: 'Enter subject',
+    text: 'Enter text'
+};
 //Admin
 router.post('/createClinic', (req, res) => {
     let newClinic = new Clinic(req.body);
@@ -81,7 +99,8 @@ router.post('/removeClinic', (req, res) => {
                         return res.json({success: false, msg: "Clinic cannot be removed"});
                 });
             } else 
-                return res.json({success: false, msg: "Clinic cannot be removed"});        }
+                return res.json({success: false, msg: "Clinic cannot be removed"});        
+            }
     });
 });
 
@@ -105,11 +124,28 @@ router.post('/registerWalkInPatient', (req, res) => {
         if(patient){
             return res.json({success: true, msg: "Patient already registered"});
         } else {
+            var randomPassword = password.randomPassword({ characters: password.lower + password.upper + password.digits });
+            req.body.password = randomPassword;
             let newPatient = new Patient(req.body);
-            Patient.addWalkInPatient(newPatient, (err1, createdPatient) => {
+            Patient.addPatient(newPatient, (err1, createdPatient) => {
                 if(err1)
                     return res.json({success: false, msg: err1});
                 if(createdPatient){
+                    mailOptions.subject = "Thank you for registering with us!";
+                    mailOptions.text = "Dear " + req.body.firstName + " " + req.body.lastName + ", \n\n" + 
+                        "Thank you for registering with a clinic in a partnership with us. We are pleased to inform you that you have successfully with us.\n\n" +
+                        "Your login email will be " + req.body.email + " and the password will be " + randomPassword + ". \n\n" +
+                        "Best regards, \n" +
+                        "GrabHealth Team"; 
+                    mailOptions.to = req.body.email;
+                    transporter.sendMail(mailOptions, function(error, info){
+                        if (error) {
+                            console.log(error);
+                            return res.json({success: false, msg: "Failed to send email"});
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    })
                     return res.json({success: true, msg: "Patient successfully registered"});
                 } else {
                     return res.json({success: false, msg: "Patient cannot be registered"});
@@ -398,6 +434,7 @@ router.post("/removeFromQueue", (req, res) => {
     })
 });
 
+
 router.post("/changeAppointmentStatus", (req, res) => {
     Patient.findOne({nric: req.body.nric }, (err, patient) => {
         if(err)
@@ -420,34 +457,6 @@ router.post("/changeAppointmentStatus", (req, res) => {
         }
     });
 });
-// // Generate payment details
-// router.post('/getPayment', (req, res) => {
-//     console.log(req.body);
-//     Appointment.findOne({nric: req.body.nric}), (err, patientExist) => {
-//         if(err){
-//             return res.json({success: false, msg: err});
-//         } else {
-//             if(patientExist){
-//                 Payment.find({}).exec(function(err2, payment) {
-//                     if(err2)
-//                         return res.json({success: false, msg: err2}).status(404);
-//                     if(payment) {
-//                         payment.find({clinic: req.body.clinic})   
-//                         .populate({ path: 'payment' })
-//                         .exec(function (err, payment) {
-//                             console.log(payment);
-//                             if(err)
-//                                 return res.send({success: false, msg: err}).status(404);
-//                             return res.send({success: true, 'patients': patients }).status(201);
-//                         })
-//                     }
-//                 });
-//             } else 
-//                 return res.json({success: false, msg: "Payment cannot be created"});        
-//         }
-//     }
-// });
-
 
 
 module.exports = router;

@@ -11,6 +11,7 @@ const Appointment = require('../models/appointment');
 const axios = require('axios');
 const Nexmo = require('nexmo');
 const password = require('secure-random-password');
+const bcrypt = require('bcryptjs');
 const BlackList = require('../models/blacklist');
 
 if(process.env.CLINICSERVERURL){
@@ -91,9 +92,9 @@ router.post('/register', (req, res, next) => {
                 .catch((error) => {
                     console.log(error);
                 });
-                res.json({success: true, msg: "Patient successfully registered"});
+                return res.json({success: true, msg: "Patient successfully registered"});
             } else {
-                res.json({success: false, msg: "Failed to register user"});
+                return res.json({success: false, msg: "Failed to register user"});
             }
         }
     });
@@ -119,7 +120,7 @@ router.post('/authenticate', (req, res, next) => {
                     expiresIn: 604800 // 1 week
                 });
 
-                res.json ({
+                return res.json ({
                     success: true,
                     token: 'JWT '+token,
                     patient: {
@@ -137,7 +138,7 @@ router.post('/authenticate', (req, res, next) => {
                     msg: "Successful Login"
                 });
             } else {
-               return res.json({success: false, msg: "Wrong Password"})
+               return res.json({success: false, msg: "Wrong Password"});
             }
         })
     });
@@ -322,51 +323,100 @@ router.get('/getVisitHistory', [passport.authenticate('jwt', {session: false}), 
         });
 });
 
-//Patient Change Password
-router.post('/changePassword', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
+//Forget Password
+router.post('/forgetPassword', (req, res) => {
 
-    console.log(req.user.contactNo);
     let contactNo = req.body.contactNo;
-    Patient.getPatientById(req.user._id, (err, getPatient) => {
+    Patient.getPatientByEmail(req.body.email, (err, getPatient) => {
         if (err) {
-            console.log("getPatient Error");
+            console.log("Error getting patient");
         } else {
             if (getPatient){
                 var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
-                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, result) => {
+                let requestId = null;
+                nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, requestResult) => {
                     if (err) {
                         console.log("Send message error");
                     } else {
-                        const from = 'GrabHealth';
-                        const to = contactNo;
-                        const text = randomPassword;
-
-                        nexmo.message.sendSms(from, to, text);
+                        requestId = requestResult.requestId;
+                        if (requestResult.status == '0'){
+                            res.render('verify', {requestId : requestId});
+                        } else {
+                            return res.json({success: false, msg: "Failed to send message"});
+                        }
                     }
                 });
+
+                nexmo.verify.check({request_id : req.body.requestId, code: req.body.pin}, (err, checkResult) => {
+                    if (err) {
+                        console.log("Send message error2");
+                    } else {
+                        if (checkResult && requestResult.status == '0'){
+                            const from = 'GrabHealth';
+                            const to = '65' + contactNo;
+                            const text = randomPassword;
+
+                            nexmo.message.sendSms(from, to, text, {type:'unicode'}, (err, sendMessage) =>{
+                                if (err) {
+                                    console.log(err); 
+                                } else {
+                                    if (sendMessage) {
+                                        bcrypt.genSalt(10, (err, salt) => {
+                                            bcrypt.hash(randomPassword, salt, (err, hash) =>{
+                                                if(err) throw err;
+                                                getPatient.password = hash;
+                                                getPatient.save();
+                                                console.log("Message sent");
+                                                return res.json({success: true, msg: "Password have been reset"});
+                                            });
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            return res.json({success: false, msg: "Failed to send message"});
+                        }
+                    }
+                })
             }
         }
-    })
+    });
 });
 
-//Forget Password
-// router.post('/forgetPassword', (req, res) => {
-//     let contactNo = req.body.contactNo;
-//     let nric = req.body.nric;
-//     console.log(contactNo);
-//     console.log(nric);
-//     nexmo.verify.request({number: contactNo}, (err, result) => {
-//         if (err) {
-//             console.log("Error");
-//         } else {
-//             let requestId = result.requestId;
-//             if (result.status == '0'){
-//                 res.render('verify', {requestId: requestId});
-//             } else {
-//                 res.status(401).send(result.error_text);
-//             }
-//         }
-//     });
-// });
+//Patient Change Password
+router.post('/changePassword', [passport.authenticate('jwt', {session: false}), isNotBlackListedToken], (req, res) => {
+
+    Patient.getPatientById(req.user._id, (err, getPatient) => {
+        if (err) {
+            console.log("Error getting patient");
+        } else {
+            if (getPatient){
+                let patient = new Patient ({
+                    password: req.body.password,
+                    newPassword: req.body.newPassword,
+                    confirmPassword: req.body.confirmPassword
+                });
+                getPatient.update(req.body._id, (err, updatePassword) => {
+                    if (err){
+                        console.log("Error updating");
+                        return res.json({success: false, msg: "Password cannot be updated"});
+                    } else {
+                        bcrypt.genSalt(10, (err, salt) => {
+                            bcrypt.hash(req.body.newPassword, salt, (err, hash) =>{
+                                if(err) throw err;
+                                getPatient.password = hash;
+                                getPatient.save();
+                                console.log("Password updated");
+                                return res.json({success: true, msg: "Password have been updated"});
+                            });
+                        });
+                    }
+                });
+                
+            }
+        }
+    });
+});
+
 
 module.exports = router;
