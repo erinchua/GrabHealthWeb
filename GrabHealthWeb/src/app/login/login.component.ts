@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
 
   changeForm = new FormGroup({
     email: new FormControl('email'),
-    contactNo: new FormControl('contactNo')
+    nric: new FormControl('nric')
   });
   
   submitted = false;
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
 
     this.changeForm = this.formBuilder.group({
       email: ['', Validators.required],
-      contactNo: ['', Validators.required]
+      nric: ['', Validators.required]
     });
 
   }
