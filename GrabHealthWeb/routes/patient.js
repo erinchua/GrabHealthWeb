@@ -324,18 +324,19 @@ router.get('/getVisitHistory', [passport.authenticate('jwt', {session: false}), 
 //Forget Password
 router.post('/forgetPassword', (req, res) => {
 
-    let contactNo = req.body.contactNo;
     Patient.getPatientByEmail(req.body.email, (err, getPatient) => {
         if (err) {
             console.log("Error getting patient");
         } else {
             if (getPatient){
+                let contactNo = getPatient.contactNo;
+                let nric = getPatient.nric;
                 var randomPassword = password.randomPassword ({ characters: password.lower + password.upper + password.digits });
                 nexmo.verify.request({number: contactNo, brand: 'GrabHealth'}, (err, send) => {
                     if (err) {
                         console.log("Send message error");
                     } else {
-                        if (send){
+                        if (getPatient.nric == req.body.nric){
                             const from = 'GrabHealth';
                             const to = '65' + contactNo;
                             const text = randomPassword;

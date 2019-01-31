@@ -65,10 +65,10 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="contactNo">Contact No.:</label>
-                    <input type = "text" class="form-control" id="contactNo" formControlName = "contactNo" [ngClass]="{ 'is-invalid': submitted && changeForm.controls.contactNo.errors }">
-                    <div *ngIf="submitted && changeForm.controls.contactNo.errors" class="invalid-feedback">
-                      <div *ngIf="changeForm.controls.contactNo.errors.required">Required!</div>
+                  <label for="nric">NRIC:</label>
+                    <input type = "text" class="form-control" id="nric" formControlName = "nric" [ngClass]="{ 'is-invalid': submitted && changeForm.controls.nric.errors }">
+                    <div *ngIf="submitted && changeForm.controls.nric.errors" class="invalid-feedback">
+                      <div *ngIf="changeForm.controls.nric.errors.required">Required!</div>
                     </div>
                 </div>
         
